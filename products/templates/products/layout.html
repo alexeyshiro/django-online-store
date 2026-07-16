@@ -1,0 +1,35 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'online_store/css/main.css' %}">
+</head>
+<body>
+    <header>
+        <button class="logo-btn" onclick="window.location.reload()" aria-label="На главную">
+        <span class="box">OS</span>
+        <span class="store-word">ONLINE STORE</span>
+        </button>
+        <nav class="top-links">
+        <a href="#catalog">Каталог</a>
+        <a href="#">Конфигуратор ПК</a>
+        <a href="#">Гарантия</a>
+        <a href="#">Контакты</a>
+        </nav>
+        <button class="header-cta">Корзина</button>
+    </header>
+    <main>
+        {% block main %}
+        {% endblock %}
+    </main>
+    <basement>
+        {% block basement %}
+        {% endblock %}
+    </basement>
+</body>
+</html>

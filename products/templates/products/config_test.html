@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Конфигуратор ПК — OS Online Store</title>
+<style>
+  :root{
+    --red: #e11d2e;
+    --red-dark: #c8172a;
+    --black: #16181c;
+    --gray-text: #6b7280;
+    --gray-border: #e6e7eb;
+    --gray-bg: #f6f7f8;
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin:0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color:#1a1a1a;
+    background:#fff;
+  }
+  a{ text-decoration:none; color:inherit; }
+
+  /* HEADER (совпадает с главной страницей) */
+  header{
+    background: var(--black);
+    padding: 18px 48px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:800;
+    font-size:18px;
+    color:#fff;
+    letter-spacing:0.5px;
+  }
+  .logo .box{
+    background: var(--red);
+    color:#fff;
+    font-weight:800;
+    padding:4px 8px;
+    border-radius:4px;
+    font-size:15px;
+  }
+  nav{
+    display:flex;
+    gap:32px;
+  }
+  nav a{
+    color:#dcdde0;
+    font-size:14px;
+    font-weight:500;
+    transition: color .15s;
+  }
+  nav a.active, nav a:hover{ color:#fff; }
+  .cart-btn{
+    background: var(--red);
+    color:#fff;
+    font-size:14px;
+    font-weight:600;
+    padding:10px 20px;
+    border-radius:6px;
+  }
+  .cart-btn:hover{ background: var(--red-dark); }
+  .header-line{ height:4px; background: var(--red); }
+
+  /* BREADCRUMB + TITLE */
+  .page-head{
+    max-width:1200px;
+    margin: 0 auto;
+    padding: 28px 48px 0 48px;
+  }
+  .breadcrumb{
+    font-size:13px;
+    color: var(--gray-text);
+    margin-bottom:14px;
+  }
+  .breadcrumb a:hover{ color:var(--red); }
+  h1.page-title{
+    font-size:32px;
+    font-weight:800;
+    margin:0 0 24px 0;
+  }
+
+  /* LAYOUT */
+  .wrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding: 0 48px 60px 48px;
+    display:grid;
+    grid-template-columns: 1fr 320px;
+    gap:28px;
+  }
+
+  /* COMPONENT LIST CARD */
+  .config-card{
+    border:1px solid var(--gray-border);
+    border-radius:12px;
+    overflow:hidden;
+  }
+  .config-card-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:20px 24px;
+    border-bottom:1px solid var(--gray-border);
+  }
+  .config-card-header h2{
+    font-size:16px;
+    margin:0;
+    font-weight:700;
+  }
+  .progress{
+    font-size:13px;
+    color: var(--gray-text);
+    font-weight:600;
+  }
+
+  .comp-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 24px;
+    border-bottom:1px solid var(--gray-border);
+  }
+  .comp-row:last-child{ border-bottom:none; }
+  .comp-left{
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .comp-icon{
+    width:42px;
+    height:42px;
+    border-radius:10px;
+    background: var(--gray-bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .comp-icon svg{ width:20px; height:20px; stroke: var(--black); }
+  .comp-name{
+    font-size:15px;
+    font-weight:600;
+  }
+  .comp-tag{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+    color: var(--gray-text);
+    font-weight:600;
+    margin-top:2px;
+  }
+  .comp-tag.required{ color: var(--red); }
+
+  .add-btn{
+    border:1.5px solid var(--red);
+    background:#fff;
+    color: var(--red);
+    font-size:13px;
+    font-weight:700;
+    padding:9px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    transition: all .15s;
+    white-space:nowrap;
+  }
+  .add-btn:hover{
+    background: var(--red);
+    color:#fff;
+  }
+
+  /* SIDEBAR */
+  .side{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .side-card{
+    border:1px solid var(--gray-border);
+    border-radius:12px;
+    padding:20px;
+  }
+  .side-card h3{
+    font-size:15px;
+    margin:0 0 6px 0;
+    font-weight:700;
+  }
+  .side-card p{
+    font-size:13px;
+    color: var(--gray-text);
+    margin:0;
+    line-height:1.5;
+  }
+
+  .summary-card{
+    background: var(--black);
+    color:#fff;
+    border-radius:12px;
+    padding:24px;
+  }
+  .summary-card h3{
+    font-size:15px;
+    margin:0 0 16px 0;
+    font-weight:700;
+  }
+  .summary-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    color:#c9cacd;
+    margin-bottom:10px;
+  }
+  .summary-total{
+    display:flex;
+    justify-content:space-between;
+    font-size:18px;
+    font-weight:800;
+    margin:18px 0 20px 0;
+    padding-top:16px;
+    border-top:1px solid #33353a;
+  }
+  .buy-btn{
+    width:100%;
+    background: var(--red);
+    color:#fff;
+    border:none;
+    padding:14px;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    transition: background .15s;
+  }
+  .buy-btn:hover{ background: var(--red-dark); }
+
+  /* FOOTER (идентичен главной странице) */
+  footer{
+    background: var(--black);
+    padding: 40px 48px;
+    display:flex;
+    justify-content:center;
+  }
+  .footer-placeholder{
+    border:1px dashed #45474d;
+    color:#8b8d92;
+    font-size:13px;
+    padding:14px 28px;
+    border-radius:8px;
+  }
+
+  @media (max-width:900px){
+    .wrap{ grid-template-columns: 1fr; }
+    header{ padding:16px 20px; flex-wrap:wrap; gap:14px; }
+    nav{ display:none; }
+    .page-head, .wrap{ padding-left:20px; padding-right:20px; }
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <span class="box">OS</span>
+      ONLINE STORE
+    </div>
+    <nav>
+      <a href="index.html">Каталог</a>
+      <a href="configurator.html" class="active">Сборка ПК</a>
+      <a href="#">Гарантия</a>
+      <a href="#">Контакты</a>
+    </nav>
+    <a href="#" class="cart-btn">Корзина</a>
+  </header>
+  <div class="header-line"></div>
+
+  <div class="page-head">
+    <div class="breadcrumb"><a href="index.html">Главная</a> / Конфигуратор ПК</div>
+    <h1 class="page-title">Конфигуратор ПК</h1>
+  </div>
+
+  <div class="wrap">
+
+    <!-- Список комплектующих -->
+    <div class="config-card">
+      <div class="config-card-header">
+        <h2>Обязательные комплектующие</h2>
+        <div class="progress">0 / 8</div>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-left">
+          <div class="comp-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>
+          </div>
+          <div>
+            <div class="comp-name">Процессор</div>
+            <div class="comp-tag required">Обязательно</div>
+          </div>
+        </div>
+        <button class="add-btn">Добавить</button>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-left">
+          <div class="comp-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg>
+          </div>
+          <div>
+            <div class="comp-name">Материнская плата</div>
+            <div class="comp-tag required">Обязательно</div>
+          </div>
+        </div>
+        <button class="add-btn">Добавить</button>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-left">
+          <div class="comp-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="4" y="7" width="16" height="10" rx="1"/><path d="M8 7v10M12 7v10M16 7v10"/></svg>
+          </div>
+          <div>
+            <div class="comp-name">Оперативная память</div>
+            <div class="comp-tag required">Обязательно</div>
+          </div>
+        </div>
+        <button class="add-btn">Добавить</button>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-left">
+          <div class="comp-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="8" cy="12" r="2"/></svg>
+          </div>
+          <div>
+            <div class="comp-name">Видеокарта</div>
+            <div class="comp-tag">Опционально</div>
+          </div>
+        </div>
+        <button class="add-btn">Добавить</button>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-left">
+          <div class="comp-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M9 4v6"/></svg>
+          </div>
+          <div>
+            <div class="comp-name">Хранение данных <span style="color:var(--gray-text); font-weight:500;">SSD / HDD</span></div>
+            <div class="comp-tag required">Обязательно</div>
+          </div>
+        </div>
+        <button class="add-btn">Добавить</button>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-left">
+          <div class="comp-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>
+          </div>
+          <div>
+            <div class="comp-name">Охлаждение процессора</div>
+            <div class="comp-tag required">Обязательно</div>
+          </div>
+        </div>
+        <button class="add-btn">Добавить</button>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-left">
+          <div class="comp-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M9 6h6M9 10h6"/></svg>
+          </div>
+          <div>
+            <div class="comp-name">Корпус</div>
+            <div class="comp-tag required">Обязательно</div>
+          </div>
+        </div>
+        <button class="add-btn">Добавить</button>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-left">
+          <div class="comp-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 21v-3h6v3"/></svg>
+          </div>
+          <div>
+            <div class="comp-name">Блок питания</div>
+            <div class="comp-tag required">Обязательно</div>
+          </div>
+        </div>
+        <button class="add-btn">Добавить</button>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-left">
+          <div class="comp-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          </div>
+          <div>
+            <div class="comp-name">Вентиляторы <span style="color:var(--gray-text); font-weight:500;">для корпуса</span></div>
+            <div class="comp-tag">Опционально</div>
+          </div>
+        </div>
+        <button class="add-btn">Добавить</button>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="side">
+      <div class="side-card">
+        <h3>Выберите комплектующие</h3>
+        <p>Начинайте с любой категории — процессора, материнской платы или видеокарты.</p>
+      </div>
+      <div class="side-card">
+        <h3>Соберите полный комплект</h3>
+        <p>Завершив сборку, добавьте её в корзину целиком или сохраните в личном кабинете.</p>
+      </div>
+
+      <div class="summary-card">
+        <h3>Ваша сборка</h3>
+        <div class="summary-row"><span>Выбрано компонентов</span><span>0 / 8</span></div>
+        <div class="summary-total"><span>Итого</span><span>0 ₽</span></div>
+        <button class="buy-btn">Добавить в корзину</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="footer-placeholder">Здесь потом будет информация</div>
+  </footer>
+
+</body>
+</html>
