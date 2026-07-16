@@ -7,5 +7,5 @@ from django.shortcuts import render
 def index(request):
     return render(request, "products/index.html")
 
-def check(request):
-    return render(request, "products/config_test.html")
+def config(request):
+    return render(request, "products/configurator.html")
