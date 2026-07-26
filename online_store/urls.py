@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from products.views import index, config
+from products.views import index, config, catalog_motherboards
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -26,6 +26,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index, name='index'),
     path('configurator/', config, name='config'),
-
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('catalog_motherboards/', catalog_motherboards, name='catalog_mother'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

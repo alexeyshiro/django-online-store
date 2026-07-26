@@ -1,0 +1,274 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link href="{% static 'online_store/css/catalog.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<!-- ==========================================================
+     ПАНЕЛЬ ПЕРЕКЛЮЧЕНИЯ МЕЖДУ КАТАЛОГАМИ КОМПЛЕКТУЮЩИХ
+     Активный раздел помечается классом "active".
+     Когда появятся реальные url для остальных каталогов —
+     замените href="#" на ссылку через тег url (catalog_cpu и т.д.)
+     ========================================================== -->
+<nav class="category-switch">
+  <a href="{% url 'catalog_mother' %}" class="cat-tab active">Материнские платы</a>
+  <a href="#" class="cat-tab">Процессоры</a>
+  <a href="#" class="cat-tab">Оперативная память</a>
+  <a href="#" class="cat-tab">Видеокарты</a>
+  <a href="#" class="cat-tab">Хранение данных</a>
+  <a href="#" class="cat-tab">Охлаждение</a>
+  <a href="#" class="cat-tab">Корпусы</a>
+  <a href="#" class="cat-tab">Блоки питания</a>
+  <a href="#" class="cat-tab">Вентиляторы</a>
+</nav>
+
+<div class="page-head">
+  <div class="breadcrumb"><a href="{% url 'index' %}">Главная</a> / Материнские платы</div>
+  <h1 class="page-title">Материнские платы</h1>
+</div>
+
+<!-- ==========================================================
+     ТОП-5 ПО ПРОДАЖАМ
+     Ожидает в контексте переменную top_products — список из
+     максимум 5 объектов/словарей с полями:
+     name, price, brand, image (необязательно), sold_count
+     Пока БД нет — резервная ветка (empty) показывает заглушки.
+     ========================================================== -->
+<section class="top-sales">
+  <h2 class="section-title">Топ-5 по продажам</h2>
+  <div class="top-row">
+    {% for product in top_products %}
+    <a href="#" class="top-card">
+      <span class="top-rank">{{ forloop.counter }}</span>
+      <span class="top-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="17" cy="7" r="1.4"/><path d="M7 8h5M7 12h8M7 16h5M17 12v6"/></svg>
+      </span>
+      <span class="top-name">{{ product.name }}</span>
+      <span class="top-price">{{ product.price }} ₽</span>
+    </a>
+    {% empty %}
+      {% for i in "12345" %}
+      <div class="top-card placeholder">
+        <span class="top-rank">{{ forloop.counter }}</span>
+        <span class="top-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="17" cy="7" r="1.4"/><path d="M7 8h5M7 12h8M7 16h5M17 12v6"/></svg>
+        </span>
+        <span class="top-name">Товар скоро появится</span>
+        <span class="top-price">—</span>
+      </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</section>
+
+<div class="catalog-wrap">
+
+  <!-- ==========================================================
+       ФИЛЬТРЫ
+       Форма отправляется методом GET — значения попадут в
+       query-параметры (?brand=asus&socket=am5...), которые
+       позднее view сможет читать через request.GET и
+       передавать в ORM-фильтр queryset'а. Работает без JS:
+       раскрытие/сворачивание групп — через <details>/<summary>.
+       ========================================================== -->
+  <aside class="filters">
+    <form method="get" action="">
+
+      <div class="filter-quick">
+        <label class="checkbox-row">
+          <input type="checkbox" name="in_stock" value="1">
+          <span>В наличии</span>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" name="rating" value="4plus">
+          <span>Рейтинг 4 и выше</span>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" name="reliable" value="1">
+          <span>Надёжные модели</span>
+          <span class="badge-shield" title="Минимум обращений в сервис">✓</span>
+        </label>
+      </div>
+
+      <details class="filter-group" open>
+        <summary>Цена</summary>
+        <div class="price-range">
+          <input type="number" name="price_min" placeholder="от" min="0">
+          <span class="dash">—</span>
+          <input type="number" name="price_max" placeholder="до" min="0">
+        </div>
+      </details>
+
+      <details class="filter-group">
+        <summary>Бренд</summary>
+        <div class="filter-options">
+          <label class="checkbox-row"><input type="checkbox" name="brand" value="asus"><span>ASUS</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="brand" value="msi"><span>MSI</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="brand" value="gigabyte"><span>GIGABYTE</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="brand" value="asrock"><span>ASRock</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="brand" value="biostar"><span>Biostar</span></label>
+        </div>
+      </details>
+
+      <details class="filter-group">
+        <summary>Сокет</summary>
+        <div class="filter-options">
+          <label class="checkbox-row"><input type="checkbox" name="socket" value="am5"><span>AM5</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="socket" value="am4"><span>AM4</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="socket" value="lga1851"><span>LGA1851</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="socket" value="lga1700"><span>LGA1700</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="socket" value="lga1200"><span>LGA1200</span></label>
+        </div>
+      </details>
+
+      <details class="filter-group">
+        <summary>Тип поддерживаемой памяти</summary>
+        <div class="filter-options">
+          <label class="checkbox-row"><input type="checkbox" name="ram_type" value="ddr5"><span>DDR5</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="ram_type" value="ddr4"><span>DDR4</span></label>
+        </div>
+      </details>
+
+      <details class="filter-group">
+        <summary>Форм-фактор</summary>
+        <div class="filter-options">
+          <label class="checkbox-row"><input type="checkbox" name="form_factor" value="atx"><span>ATX</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="form_factor" value="matx"><span>Micro-ATX</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="form_factor" value="itx"><span>Mini-ITX</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="form_factor" value="eatx"><span>E-ATX</span></label>
+        </div>
+      </details>
+
+      <details class="filter-group">
+        <summary>Чипсет AMD</summary>
+        <div class="filter-options">
+          <label class="checkbox-row"><input type="checkbox" name="chipset_amd" value="x670e"><span>X670E</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="chipset_amd" value="x670"><span>X670</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="chipset_amd" value="b650"><span>B650</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="chipset_amd" value="a620"><span>A620</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="chipset_amd" value="b550"><span>B550</span></label>
+        </div>
+      </details>
+
+      <details class="filter-group">
+        <summary>Чипсет Intel</summary>
+        <div class="filter-options">
+          <label class="checkbox-row"><input type="checkbox" name="chipset_intel" value="z790"><span>Z790</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="chipset_intel" value="b760"><span>B760</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="chipset_intel" value="h610"><span>H610</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="chipset_intel" value="z690"><span>Z690</span></label>
+        </div>
+      </details>
+
+      <details class="filter-group">
+        <summary>Версия PCI Express</summary>
+        <div class="filter-options">
+          <label class="checkbox-row"><input type="checkbox" name="pcie" value="5.0"><span>5.0</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="pcie" value="4.0"><span>4.0</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="pcie" value="3.0"><span>3.0</span></label>
+        </div>
+      </details>
+
+      <details class="filter-group">
+        <summary>Количество слотов памяти</summary>
+        <div class="filter-options">
+          <label class="checkbox-row"><input type="checkbox" name="ram_slots" value="2"><span>2</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="ram_slots" value="4"><span>4</span></label>
+        </div>
+      </details>
+
+      <details class="filter-group">
+        <summary>Количество разъёмов M.2</summary>
+        <div class="filter-options">
+          <label class="checkbox-row"><input type="checkbox" name="m2_slots" value="1"><span>1</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="m2_slots" value="2"><span>2</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="m2_slots" value="3"><span>3</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="m2_slots" value="4plus"><span>4 и более</span></label>
+        </div>
+      </details>
+
+      <details class="filter-group">
+        <summary>Разъёмы SATA</summary>
+        <div class="filter-options">
+          <label class="checkbox-row"><input type="checkbox" name="sata" value="2"><span>2</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="sata" value="4"><span>4</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="sata" value="6plus"><span>6 и более</span></label>
+        </div>
+      </details>
+
+      <details class="filter-group">
+        <summary>Стандарт Wi-Fi</summary>
+        <div class="filter-options">
+          <label class="checkbox-row"><input type="checkbox" name="wifi" value="none"><span>Без Wi-Fi</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="wifi" value="wifi6"><span>Wi-Fi 6</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="wifi" value="wifi6e"><span>Wi-Fi 6E</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="wifi" value="wifi7"><span>Wi-Fi 7</span></label>
+        </div>
+      </details>
+
+      <details class="filter-group">
+        <summary>Назначение</summary>
+        <div class="filter-options">
+          <label class="checkbox-row"><input type="checkbox" name="purpose" value="gaming"><span>Игровая</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="purpose" value="universal"><span>Универсальная</span></label>
+          <label class="checkbox-row"><input type="checkbox" name="purpose" value="compact"><span>Компактная сборка</span></label>
+        </div>
+      </details>
+
+      <button type="submit" class="all-filters-btn">Применить фильтры</button>
+    </form>
+  </aside>
+
+  <!-- ==========================================================
+       СЕТКА ТОВАРОВ
+       Ожидает в контексте переменную products — queryset/список
+       объектов с полями name, price, brand, socket и т.д.
+       Пока БД нет — резервная ветка (empty) показывает заглушки-карточки.
+       Когда появится модель Motherboard — просто передайте
+       products = Motherboard.objects.all() во view, разметка
+       карточки менять не придётся.
+       ========================================================== -->
+  <section class="product-area">
+    <div class="product-toolbar">
+      <span class="results-count">{% if products %}{{ products|length }} товаров{% else %}Товары скоро появятся{% endif %}</span>
+      <select class="sort-select" name="sort">
+        <option>По популярности</option>
+        <option>Сначала дешёвые</option>
+        <option>Сначала дорогие</option>
+        <option>По рейтингу</option>
+      </select>
+    </div>
+
+    <div class="product-grid">
+      {% for product in products %}
+      <a href="#" class="product-card">
+        <span class="product-image">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="17" cy="7" r="1.4"/><path d="M7 8h5M7 12h8M7 16h5M17 12v6"/></svg>
+        </span>
+        <span class="product-name">{{ product.name }}</span>
+        <span class="product-specs">{{ product.socket }} · {{ product.form_factor }}</span>
+        <span class="product-price">{{ product.price }} ₽</span>
+        <button class="product-add">В корзину</button>
+      </a>
+      {% empty %}
+        {% for i in "123456" %}
+        <div class="product-card placeholder">
+          <span class="product-image">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="17" cy="7" r="1.4"/><path d="M7 8h5M7 12h8M7 16h5M17 12v6"/></svg>
+          </span>
+          <span class="product-name">Товар скоро появится</span>
+          <span class="product-specs">—</span>
+          <span class="product-price">—</span>
+          <button class="product-add" disabled>Нет в продаже</button>
+        </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </section>
+
+</div>
+
+{% endblock %}

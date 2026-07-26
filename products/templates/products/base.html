@@ -6,7 +6,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{{ title|title }}</title>
 
     <link href="{% static 'online_store/css/base.css' %}" rel="stylesheet">
 
@@ -25,8 +25,31 @@
         <a href="#">Гарантия</a>
         <a href="#">Контакты</a>
         </nav>
-        <button class="header-cta">Корзина</button>
+       <div class="header-right">
+      <button class="cart-btn" aria-label="Корзина">
+        <svg viewBox="0 0 24 24"><path d="M3 4h2l2.2 11.2a2 2 0 002 1.8h7.6a2 2 0 002-1.7L20 8H6"/><circle cx="9.5" cy="20" r="1.2"/><circle cx="17" cy="20" r="1.2"/></svg>
+      </button>
+      <a href="#login" class="header-cta">Войти в аккаунт</a>
+    </div>
     </header>
+
+    <!-- Модальное окно входа: чисто HTML/CSS, без JS.
+         Открывается ссылкой на #login, закрывается ссылкой на # -->
+    <div class="modal-overlay" id="login">
+      <a href="#" class="modal-backdrop" aria-label="Закрыть окно входа"></a>
+      <div class="modal-box">
+        <a href="#" class="modal-close" aria-label="Закрыть">&times;</a>
+        <h3>Вход в аккаунт</h3>
+        <p class="modal-sub">Введите телефон и пароль</p>
+        <form action="#" method="get">
+          <label for="login-phone">Телефон</label>
+          <input id="login-phone" type="tel" name="phone" placeholder="+7 900 000-00-00" required>
+          <label for="login-password">Пароль</label>
+          <input id="login-password" type="password" name="password" placeholder="Пароль" required>
+          <button type="submit" class="btn-primary modal-submit">Войти</button>
+        </form>
+      </div>
+    </div>
 
     {% block content %} {% endblock %}
 
