@@ -1,0 +1,141 @@
+<!-- БЫСТРЫЕ ФИЛЬТРЫ -->
+
+<div class="filter-quick">
+  <label class="checkbox-row">
+    <input type="checkbox" name="in_stock" value="1">
+    <span>В наличии</span>
+  </label>
+
+  <label class="checkbox-row">
+    <input type="checkbox" name="rating" value="4plus">
+    <span>Рейтинг 4 и выше</span>
+  </label>
+
+  <label class="checkbox-row">
+    <input type="checkbox" name="reliable" value="1">
+    <span>Надёжные модели</span>
+    <span class="badge-shield">✓</span>
+  </label>
+</div>
+
+
+<!-- ЦЕНА -->
+
+<details class="filter-group" open>
+  <summary>Цена</summary>
+  <div class="price-range">
+    <input type="number" name="price_min" placeholder="от" min="0">
+    <span class="dash">—</span>
+    <input type="number" name="price_max" placeholder="до" min="0">
+  </div>
+</details>
+
+
+<!-- ПРОИЗВОДИТЕЛЬ -->
+
+<details class="filter-group">
+  <summary>Производитель</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="manufacturer" value="amd"><span>AMD</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="manufacturer" value="intel"><span>Intel</span></label>
+  </div>
+</details>
+
+
+<!-- СОКЕТ -->
+
+<details class="filter-group">
+  <summary>Сокет</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="socket" value="am5"><span>AM5</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="socket" value="am4"><span>AM4</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="socket" value="lga1851"><span>LGA1851</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="socket" value="lga1700"><span>LGA1700</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="socket" value="lga1200"><span>LGA1200</span></label>
+  </div>
+</details>
+
+
+<!-- ПОКОЛЕНИЕ -->
+
+<details class="filter-group">
+  <summary>Поколение</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="generation" value="intel14"><span>Intel 14 поколение</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="generation" value="intel13"><span>Intel 13 поколение</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="generation" value="intel12"><span>Intel 12 поколение</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="generation" value="zen5"><span>AMD Ryzen 9000</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="generation" value="zen4"><span>AMD Ryzen 7000</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="generation" value="zen3"><span>AMD Ryzen 5000</span></label>
+  </div>
+</details>
+
+
+<!-- КОЛИЧЕСТВО ЯДЕР -->
+
+<details class="filter-group">
+  <summary>Количество ядер</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="cores" value="4"><span>4</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="cores" value="6"><span>6</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="cores" value="8"><span>8</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="cores" value="12"><span>12</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="cores" value="16"><span>16</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="cores" value="24"><span>24 и более</span></label>
+  </div>
+</details>
+
+<!-- МАКСИМАЛЬНАЯ ЧАСТОТА TURBO -->
+
+<details class="filter-group">
+  <summary>Максимальная частота Turbo</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="turbo" value="4"><span>До 4.0 ГГц</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="turbo" value="45"><span>4.0 – 4.5 ГГц</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="turbo" value="5"><span>4.5 – 5.0 ГГц</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="turbo" value="55"><span>5.0 ГГц и выше</span></label>
+  </div>
+</details>
+
+<!-- ВСТРОЕННАЯ ГРАФИКА -->
+
+<details class="filter-group">
+  <summary>Встроенная графика</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="graphics" value="yes"><span>Есть</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="graphics" value="no"><span>Нет</span></label>
+  </div>
+</details>
+
+<!-- ПОДДЕРЖКА ПАМЯТИ -->
+
+<details class="filter-group">
+  <summary>Поддержка памяти</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="memory" value="ddr4"><span>DDR4</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="memory" value="ddr5"><span>DDR5</span></label>
+  </div>
+</details>
+
+<!-- TDP -->
+
+<details class="filter-group">
+  <summary>TDP</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="tdp" value="65"><span>До 65 Вт</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="tdp" value="105"><span>65–105 Вт</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="tdp" value="125"><span>Более 105 Вт</span></label>
+  </div>
+</details>
+
+<!-- КОМПЛЕКТАЦИЯ -->
+
+<details class="filter-group">
+  <summary>Комплектация</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="package" value="box"><span>BOX</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="package" value="oem"><span>OEM</span></label>
+  </div>
+</details>
+
+

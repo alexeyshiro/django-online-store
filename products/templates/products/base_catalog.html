@@ -1,0 +1,202 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link href="{% static 'online_store/css/catalog.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<!-- ==========================================================
+     ПАНЕЛЬ КАТАЛОГОВ
+     ========================================================== -->
+<nav class="category-switch">
+  {% for category in categories %}
+    <a href="#" class="cat-tab">{{ category.name }}</a>
+  {% endfor %}
+</nav>
+
+
+<!-- ==========================================================
+     ЗАГОЛОВОК СТРАНИЦЫ
+     ========================================================== -->
+<div class="page-head">
+  <h1 class="page-title">{{ category_title }}</h1>
+</div>
+
+<!-- ==========================================================
+     ТОП-5 ПРОДАЖ
+     ========================================================== -->
+<section class="top-sales">
+  <h2 class="section-title">Топ-5 по продажам</h2>
+
+  <div class="top-row">
+    {% for product in top_products %}
+    <a href="#" class="top-card">
+      <span class="top-rank">{{ forloop.counter }}</span>
+
+      <span class="top-icon">
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="1"/>
+          <circle cx="17" cy="7" r="1.4"/>
+          <path d="M7 8h5M7 12h8M7 16h5M17 12v6"/>
+        </svg>
+      </span>
+
+      <span class="top-name">{{ product.name }}</span>
+      <span class="top-price">{{ product.price }} ₽</span>
+    </a>
+
+    {% empty %}
+
+      {% for i in "12345" %}
+      <div class="top-card placeholder">
+        <span class="top-rank">{{ forloop.counter }}</span>
+
+        <span class="top-icon">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="1"/>
+            <circle cx="17" cy="7" r="1.4"/>
+            <path d="M7 8h5M7 12h8M7 16h5M17 12v6"/>
+          </svg>
+        </span>
+
+        <span class="top-name">Товар скоро появится</span>
+        <span class="top-price">—</span>
+      </div>
+      {% endfor %}
+
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ==========================================================
+     ОСНОВНОЙ КАТАЛОГ
+     ========================================================== -->
+<div class="catalog-wrap">
+
+  <!-- ==========================================================
+       ФИЛЬТРЫ
+       ========================================================== -->
+<aside class="filters">
+  <form method="get" action="">
+
+    {% include filters_template %}
+
+    <button type="submit" class="all-filters-btn">
+      Применить фильтры
+    </button>
+
+  </form>
+</aside>
+
+  <!-- ==========================================================
+       ТОВАРНАЯ ЧАСТЬ
+       ========================================================== -->
+  <section class="product-area">
+
+    <div class="product-toolbar">
+      <span class="results-count">
+        {% if products %}
+          {{ products|length }} товаров
+        {% else %}
+          Товары скоро появятся
+        {% endif %}
+      </span>
+
+      <select class="sort-select" name="sort">
+        <option>По популярности</option>
+        <option>Сначала дешёвые</option>
+        <option>Сначала дорогие</option>
+        <option>По рейтингу</option>
+      </select>
+    </div>
+
+    <!-- ==========================================================
+         ТОВАРНАЯ СЕТКА
+         ========================================================== -->
+    <div class="product-grid">
+
+      {% for product in products %}
+
+      <a href="#" class="product-card">
+
+        <span class="product-image">
+
+          {% if product.image %}
+            <img src="/media/{{ product.image }}" alt="">
+          {% else %}
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="1"/>
+              <circle cx="17" cy="7" r="1.4"/>
+              <path d="M7 8h5M7 12h8M7 16h5M17 12v6"/>
+            </svg>
+          {% endif %}
+
+        </span>
+
+        <span class="product-name">
+          {{ product.name }}
+        </span>
+
+        <span class="product-specs">
+          {% block product_specs %}
+            {{ product.specs }}
+          {% endblock %}
+        </span>
+
+        <span class="product-price">
+          {{ product.price }} ₽
+        </span>
+
+        <button class="product-add">
+          В корзину
+        </button>
+
+      </a>
+
+      {% empty %}
+
+        {% for i in "123456" %}
+
+        <div class="product-card placeholder">
+
+          <span class="product-image">
+
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="1"/>
+              <circle cx="17" cy="7" r="1.4"/>
+              <path d="M7 8h5M7 12h8M7 16h5M17 12v6"/>
+            </svg>
+
+          </span>
+
+          <span class="product-name">
+            Товар скоро появится
+          </span>
+
+          <span class="product-specs">
+            —
+          </span>
+
+          <span class="product-price">
+            —
+          </span>
+
+          <button class="product-add" disabled>
+            Нет в продаже
+          </button>
+
+        </div>
+
+        {% endfor %}
+
+      {% endfor %}
+
+    </div>
+
+  </section>
+
+</div>
+
+{% endblock %}

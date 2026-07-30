@@ -1,0 +1,190 @@
+<!-- БЫСТРЫЕ ФИЛЬТРЫ -->
+
+<div class="filter-quick">
+
+  <label class="checkbox-row">
+    <input type="checkbox" name="in_stock" value="1">
+    <span>В наличии</span>
+  </label>
+
+  <label class="checkbox-row">
+    <input type="checkbox" name="rating" value="4plus">
+    <span>Рейтинг 4 и выше</span>
+  </label>
+
+  <label class="checkbox-row">
+    <input type="checkbox" name="reliable" value="1">
+    <span>Надёжные модели</span>
+    <span class="badge-shield">✓</span>
+  </label>
+
+</div>
+
+<!-- ЦЕНА -->
+
+<details class="filter-group" open>
+  <summary>Цена</summary>
+  <div class="price-range">
+    <input type="number" name="price_min" placeholder="от" min="0">
+    <span class="dash">—</span>
+    <input type="number" name="price_max" placeholder="до" min="0">
+  </div>
+</details>
+
+<!-- БРЕНД -->
+
+<details class="filter-group">
+  <summary>Бренд</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="brand" value="asus"><span>ASUS</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="brand" value="msi"><span>MSI</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="brand" value="gigabyte"><span>GIGABYTE</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="brand" value="asrock"><span>ASRock</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="brand" value="biostar"><span>Biostar</span></label>
+  </div>
+</details>
+
+
+<!-- СОКЕТ -->
+
+<details class="filter-group">
+  <summary>Сокет</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="socket" value="am5"><span>AM5</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="socket" value="am4"><span>AM4</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="socket" value="lga1851"><span>LGA1851</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="socket" value="lga1700"><span>LGA1700</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="socket" value="lga1200"><span>LGA1200</span></label>
+  </div>
+</details>
+
+
+<!-- ТИП ПАМЯТИ -->
+
+<details class="filter-group">
+  <summary>Тип поддерживаемой памяти</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="ram_type" value="ddr5"><span>DDR5</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="ram_type" value="ddr4"><span>DDR4</span></label>
+  </div>
+</details>
+
+
+<!-- ФОРМ-ФАКТОР -->
+
+<details class="filter-group">
+  <summary>Форм-фактор</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="form_factor" value="atx"><span>ATX</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="form_factor" value="matx"><span>Micro-ATX</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="form_factor" value="itx"><span>Mini-ITX</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="form_factor" value="eatx"><span>E-ATX</span></label>
+  </div>
+</details>
+
+<!-- ЧИПСЕТ AMD -->
+
+<details class="filter-group">
+  <summary>Чипсет AMD</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="chipset_amd" value="x670e"><span>X670E</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="chipset_amd" value="x670"><span>X670</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="chipset_amd" value="b650"><span>B650</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="chipset_amd" value="a620"><span>A620</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="chipset_amd" value="b550"><span>B550</span></label>
+  </div>
+</details>
+
+
+<!-- ЧИПСЕТ INTEL -->
+
+<details class="filter-group">
+  <summary>Чипсет Intel</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="chipset_intel" value="z790"><span>Z790</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="chipset_intel" value="b760"><span>B760</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="chipset_intel" value="h610"><span>H610</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="chipset_intel" value="z690"><span>Z690</span></label>
+  </div>
+</details>
+
+
+<!-- PCI EXPRESS -->
+
+<details class="filter-group">
+  <summary>Версия PCI Express</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="pcie" value="5.0"><span>5.0</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="pcie" value="4.0"><span>4.0</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="pcie" value="3.0"><span>3.0</span></label>
+  </div>
+</details>
+
+
+<!-- СЛОТЫ ПАМЯТИ -->
+
+<details class="filter-group">
+  <summary>Количество слотов памяти</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="ram_slots" value="2"><span>2</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="ram_slots" value="4"><span>4</span></label>
+  </div>
+</details>
+
+
+<!-- M.2 -->
+
+<details class="filter-group">
+  <summary>Количество разъёмов M.2</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="m2_slots" value="1"><span>1</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="m2_slots" value="2"><span>2</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="m2_slots" value="3"><span>3</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="m2_slots" value="4plus"><span>4 и более</span></label>
+  </div>
+</details>
+
+<!-- SATA -->
+
+<details class="filter-group">
+  <summary>Разъёмы SATA</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="sata" value="2"><span>2</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="sata" value="4"><span>4</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="sata" value="6plus"><span>6 и более</span></label>
+  </div>
+</details>
+
+
+<!-- WI-FI -->
+
+<details class="filter-group">
+  <summary>Стандарт Wi-Fi</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="wifi" value="none"><span>Без Wi-Fi</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="wifi" value="wifi6"><span>Wi-Fi 6</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="wifi" value="wifi6e"><span>Wi-Fi 6E</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="wifi" value="wifi7"><span>Wi-Fi 7</span></label>
+  </div>
+</details>
+
+
+<!-- НАЗНАЧЕНИЕ -->
+
+<details class="filter-group">
+  <summary>Назначение</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="purpose" value="gaming"><span>Игровая</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="purpose" value="universal"><span>Универсальная</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="purpose" value="compact"><span>Компактная сборка</span></label>
+  </div>
+</details>
+
+<details class="filter-group">
+  <summary>Назначение</summary>
+  <div class="filter-options">
+    <label class="checkbox-row"><input type="checkbox" name="purpose" value="gaming"><span>Игровая</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="purpose" value="universal"><span>Универсальная</span></label>
+    <label class="checkbox-row"><input type="checkbox" name="purpose" value="compact"><span>Компактная сборка</span></label>
+  </div>
+</details>
