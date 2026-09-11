@@ -1,6 +1,4 @@
-from django.http import HttpResponse
 from django.shortcuts import render
-from django.template.defaultfilters import title
 from products.models import Product, ProductCategory
 
 # Create your views here.

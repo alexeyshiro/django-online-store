@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#FFFFFF;
+  --bg-alt:#F6F6F6;
+  --border:#E6E6E6;
+  --black:#141414;
+  --red:#E4232B;
+  --red-dark:#B91922;
+  --red-tint:#FCEBEC;
+  --text:#161616;
+  --text-dim:#5C6065;
+  --text-dim2:#9A9EA2;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  font-family:'Inter', sans-serif;
+  color:var(--text);
+  background:var(--bg-alt);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+.auth-wrap{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px 20px;
+}
+
+.auth-box{
+  width:100%;
+  max-width:380px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:16px 0 16px 0;
+  padding:36px 32px 32px;
+  box-shadow:0 10px 30px rgba(20,20,20,0.06);
+}
+
+.auth-box h1{
+  font-family:'Manrope', sans-serif;
+  font-weight:800;
+  font-size:24px;
+  color:var(--black);
+  margin:0 0 6px;
+}
+
+.auth-sub{
+  font-size:13.5px;
+  color:var(--text-dim);
+  margin:0 0 22px;
+}
+
+.auth-error{
+  background:var(--red-tint);
+  color:var(--red-dark);
+  font-size:13px;
+  font-weight:600;
+  padding:10px 14px;
+  border-radius:8px;
+  margin-bottom:18px;
+}
+
+.auth-box form{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.auth-box label{
+  font-size:12.5px;
+  font-weight:700;
+  color:var(--black);
+  margin-top:14px;
+}
+
+.auth-box input{
+  font-family:'Inter', sans-serif;
+  font-size:14.5px;
+  padding:12px 14px;
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  outline:none;
+  transition:border-color .15s ease;
+}
+.auth-box input:focus{ border-color:var(--red); }
+
+.auth-submit{
+  margin-top:24px;
+  width:100%;
+  text-align:center;
+}
+
+.auth-switch{
+  margin-top:20px;
+  font-size:13px;
+  color:var(--text-dim);
+  text-align:center;
+}
+.auth-switch a{ color:var(--red); font-weight:700; }
+.auth-switch a:hover{ color:var(--red-dark); }
+
+@media (max-width: 480px){
+  .auth-box{ padding:28px 22px 24px; }
+}

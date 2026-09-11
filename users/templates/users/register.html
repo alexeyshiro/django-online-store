@@ -1,0 +1,38 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link href="{% static 'online_store/css/auth.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-box">
+    <h1>Регистрация</h1>
+    <p class="auth-sub">Создайте аккаунт, чтобы оформлять заказы и сохранять избранное</p>
+
+    {% if error %}
+      <div class="auth-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <label for="id_username">Логин</label>
+      <input id="id_username" type="text" name="username" placeholder="Придумайте логин" required autofocus>
+
+      <label for="id_email">Email</label>
+      <input id="id_email" type="email" name="email" placeholder="you@example.com">
+
+      <label for="id_password">Пароль</label>
+      <input id="id_password" type="password" name="password" placeholder="Пароль" required>
+
+      <label for="id_password2">Повторите пароль</label>
+      <input id="id_password2" type="password" name="password2" placeholder="Пароль ещё раз" required>
+
+      <button type="submit" class="btn-primary auth-submit">Создать аккаунт</button>
+    </form>
+
+    <p class="auth-switch">Уже есть аккаунт? <a href="{% url 'users:login' %}">Войти</a></p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link href="{% static 'online_store/css/account.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-head">
+  <div class="breadcrumb"><a href="{% url 'index' %}">Главная</a> / Личный кабинет</div>
+  <h1 class="page-title">Здравствуйте, {{ user.username }}</h1>
+</div>
+
+{% if messages %}
+<div class="account-messages">
+  {% for message in messages %}
+    <div class="account-message {{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="account-layout">
+
+  <aside class="account-side">
+    <nav class="account-side-nav">
+      <a href="#">Корзина</a>
+      <a href="#">История покупок</a>
+      <a href="#">Избранное</a>
+    </nav>
+    <a href="{% url 'users:logout' %}" class="account-logout">Выйти</a>
+  </aside>
+
+  <div class="account-main">
+
+    <section class="account-card">
+      <h2 class="section-title">Профиль</h2>
+      <form method="post" class="account-form">
+        {% csrf_token %}
+        <input type="hidden" name="form" value="profile">
+
+        <div class="form-row">
+          <label for="id_first_name">Имя</label>
+          <input id="id_first_name" type="text" name="first_name" value="{{ user.first_name }}" placeholder="Ваше имя">
+        </div>
+
+        <div class="form-row">
+          <label for="id_last_name">Фамилия</label>
+          <input id="id_last_name" type="text" name="last_name" value="{{ user.last_name }}" placeholder="Ваша фамилия">
+        </div>
+
+        <div class="form-row">
+          <label for="id_email">Электронная почта</label>
+          <input id="id_email" type="email" name="email" value="{{ user.email }}" placeholder="you@example.com">
+        </div>
+
+        <div class="form-row">
+          <label for="id_phone">Номер телефона</label>
+          <input id="id_phone" type="tel" name="phone" value="{{ profile.phone }}" placeholder="+7 900 000-00-00">
+        </div>
+
+        <button type="submit" class="btn-primary account-save">Сохранить</button>
+      </form>
+    </section>
+
+    <section class="account-card">
+      <h2 class="section-title">Изменить пароль</h2>
+      <form method="post" class="account-form">
+        {% csrf_token %}
+        <input type="hidden" name="form" value="password">
+
+        <div class="form-row">
+          <label for="id_old_password">Текущий пароль</label>
+          <input id="id_old_password" type="password" name="old_password" placeholder="••••••••" required>
+        </div>
+
+        <div class="form-row">
+          <label for="id_new_password">Новый пароль</label>
+          <input id="id_new_password" type="password" name="new_password" placeholder="••••••••" required>
+        </div>
+
+        <div class="form-row">
+          <label for="id_new_password2">Повторите новый пароль</label>
+          <input id="id_new_password2" type="password" name="new_password2" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="btn-primary account-save">Изменить пароль</button>
+      </form>
+    </section>
+
+  </div>
+
+</div>
+
+{% endblock %}
