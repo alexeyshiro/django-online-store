@@ -1,0 +1,35 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link href="{% static 'online_store/css/account.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-head">
+  <div class="breadcrumb"><a href="{% url 'index' %}">Главная</a> / История покупок</div>
+  <h1 class="page-title">История покупок</h1>
+</div>
+
+<div class="account-layout">
+
+  <aside class="account-side">
+    <nav class="account-side-nav">
+      <a href="{% url 'users:account' %}">Профиль</a>
+      <a href="{% url 'basket:basket' %}">Корзина</a>
+      <a href="{% url 'users:favorites' %}">Избранное</a>
+    </nav>
+    <a href="{% url 'users:logout' %}" class="account-logout">Выйти</a>
+  </aside>
+
+  <div class="account-main">
+    <section class="account-card">
+      <h2 class="section-title">Ваши заказы</h2>
+      <p class="account-placeholder">Раздел в разработке. Здесь появится история ваших покупок.</p>
+    </section>
+  </div>
+
+</div>
+
+{% endblock %}

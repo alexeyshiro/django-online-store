@@ -11,8 +11,13 @@
     <h1>Регистрация</h1>
     <p class="auth-sub">Создайте аккаунт, чтобы оформлять заказы и сохранять избранное</p>
 
-    {% if error %}
-      <div class="auth-error">{{ error }}</div>
+    {% if form.errors %}
+      <div class="auth-error">
+        {% for field in form %}
+          {% for error in field.errors %}{{ error }}<br>{% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}{{ error }}<br>{% endfor %}
+      </div>
     {% endif %}
 
     <form method="post">

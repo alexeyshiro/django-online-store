@@ -1,30 +1,34 @@
-from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib import messages, auth
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
+from django.urls import reverse
+from users.forms import UserLoginForm, UserRegisterForm
 from users.models import Profile
 
 # Create your views here.
 
 
 def login_view(request):
-    if request.user.is_authenticated:
-        return redirect('users:account')
-
-    error = None
     if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('users:account')
-        error = 'Неверный логин или пароль'
+        print(request.POST)
+        form = UserLoginForm(data=request.POST)
+        if form.is_valid():
+            username = request.POST['username']
+            password = request.POST['password']
+
+            user = auth.authenticate(username=username, password=password)
+
+            if user and user.is_active:
+                auth.login(request, user)
+                return HttpResponseRedirect(reverse('users:account'))
+
+    else:
+        form = UserLoginForm()
 
     context = {
-        'title': 'Вход',
-        'error': error,
+        "form": form,
     }
     return render(request, "users/login.html", context)
 
@@ -33,27 +37,18 @@ def register_view(request):
     if request.user.is_authenticated:
         return redirect('users:account')
 
-    error = None
     if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        email = request.POST.get('email', '').strip()
-        password = request.POST.get('password', '')
-        password2 = request.POST.get('password2', '')
-
-        if not username or not password:
-            error = 'Заполните обязательные поля'
-        elif password != password2:
-            error = 'Пароли не совпадают'
-        elif User.objects.filter(username=username).exists():
-            error = 'Пользователь с таким именем уже существует'
-        else:
-            user = User.objects.create_user(username=username, email=email, password=password)
+        form = UserRegisterForm(data=request.POST)
+        if form.is_valid():
+            user = form.save()
             login(request, user)
             return redirect('users:account')
+    else:
+        form = UserRegisterForm()
 
     context = {
         'title': 'Регистрация',
-        'error': error,
+        'form': form,
     }
     return render(request, "users/register.html", context)
 
@@ -100,8 +95,31 @@ def account_view(request):
                 messages.success(request, 'Пароль изменён')
             return redirect('users:account')
 
+    has_profile_data = bool(
+        request.user.first_name or request.user.last_name or request.user.email or profile.phone
+    )
+    edit_section = request.GET.get('edit')
+
     context = {
         'title': 'Личный кабинет',
         'profile': profile,
+        'profile_locked': has_profile_data and edit_section != 'profile',
+        'password_locked': edit_section != 'password',
     }
     return render(request, "users/account.html", context)
+
+
+@login_required(login_url='users:login')
+def history_view(request):
+    context = {
+        'title': 'История покупок',
+    }
+    return render(request, "users/history.html", context)
+
+
+@login_required(login_url='users:login')
+def favorites_view(request):
+    context = {
+        'title': 'Избранное',
+    }
+    return render(request, "users/favorites.html", context)

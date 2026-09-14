@@ -139,14 +139,27 @@ body{
   color:var(--black);
 }
 
+.account-placeholder{
+  font-size:14px;
+  color:var(--text-dim);
+  margin:0;
+}
+
 /* ==========================================================
    ФОРМЫ (профиль / смена пароля)
    ========================================================== */
 .account-form{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:4px 16px;
+  display:flex;
+  flex-direction:column;
   max-width:560px;
+}
+.form-row-pair{
+  display:flex;
+  gap:16px;
+}
+.form-row-pair .form-row{
+  flex:1;
+  min-width:0;
 }
 .form-row{
   display:flex;
@@ -171,8 +184,16 @@ body{
 }
 .form-row input:focus{ border-color:var(--red); }
 
+.account-fields{ display:contents; }
+
+.account-card.is-locked .form-row{
+  opacity:.55;
+  transition:opacity .15s ease;
+}
+.account-card.is-locked .form-row input{ cursor:not-allowed; }
+.form-row input:disabled{ background:var(--bg-alt); }
+
 .account-save{
-  grid-column:1 / -1;
   margin-top:20px;
   width:auto;
   align-self:start;
@@ -185,7 +206,8 @@ body{
   .account-layout{ padding:16px 20px 50px; grid-template-columns:1fr; }
   .account-side{ position:static; }
   .account-side-nav{ flex-direction:row; flex-wrap:wrap; }
-  .account-form{ grid-template-columns:1fr; max-width:none; }
+  .form-row-pair{ flex-direction:column; gap:0; }
+  .account-form{ max-width:none; }
 }
 
 @media (max-width: 480px){

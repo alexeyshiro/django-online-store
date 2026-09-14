@@ -11,8 +11,8 @@
     <h1>Вход в аккаунт</h1>
     <p class="auth-sub">Введите логин и пароль</p>
 
-    {% if error %}
-      <div class="auth-error">{{ error }}</div>
+    {% if form.errors %}
+      <div class="auth-error">Неверный логин или пароль</div>
     {% endif %}
 
     <form method="post">
@@ -23,7 +23,7 @@
       <label for="id_password">Пароль</label>
       <input id="id_password" type="password" name="password" placeholder="Пароль" required>
 
-      <button type="submit" class="btn-primary auth-submit">Войти</button>
+      <input type="submit" class="btn-primary auth-submit" value="Войти">
     </form>
 
     <p class="auth-switch">Нет аккаунта? <a href="{% url 'users:register' %}">Зарегистрироваться</a></p>
