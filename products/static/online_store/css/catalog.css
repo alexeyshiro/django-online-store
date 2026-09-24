@@ -364,6 +364,40 @@ a.product-name:hover{ color:var(--red); text-decoration:underline; }
 }
 
 /* ==========================================================
+   ПАГИНАЦИЯ
+   ========================================================== */
+.pagination{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-top:28px;
+}
+.page-btn{
+  font-size:13.5px;
+  font-weight:600;
+  color:var(--text);
+  background:#fff;
+  border:1.5px solid var(--border);
+  padding:9px 16px;
+  border-radius:0 8px 0 8px;
+  white-space:nowrap;
+  transition:all .15s ease;
+}
+a.page-btn:hover{ border-color:var(--red); color:var(--red); }
+.page-btn.disabled{ color:var(--text-dim2); background:var(--bg-alt); cursor:default; }
+.page-current{
+  font-size:13.5px;
+  font-weight:700;
+  color:#fff;
+  background:var(--black);
+  padding:9px 16px;
+  border-radius:0 8px 0 8px;
+  white-space:nowrap;
+}
+
+/* ==========================================================
    АДАПТИВНОСТЬ
    ========================================================== */
 @media (max-width: 1050px){
@@ -382,3 +416,29 @@ a.product-name:hover{ color:var(--red); text-decoration:underline; }
 @media (max-width: 480px){
   .top-row{ grid-template-columns:1fr 1fr; }
 }
+.product-add-form{ width:100%; margin:0; }
+
+.product-qty{
+  width:100%;
+  margin-top:6px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border:2px solid var(--red);
+  border-radius:0 8px 0 8px;
+  overflow:hidden;
+}
+.product-qty form{ margin:0; }
+.product-qty-btn{
+  width:40px;
+  height:38px;
+  background:var(--red);
+  color:#fff;
+  border:none;
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+  transition:background .15s ease;
+}
+.product-qty-btn:hover{ background:var(--red-dark); }
+.product-qty-value{ font-weight:700; font-size:14px; color:var(--black); }

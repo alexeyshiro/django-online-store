@@ -98,7 +98,7 @@
     <div class="product-toolbar">
       <span class="results-count">
         {% if products %}
-          {{ products|length }} товаров
+          {{ products.paginator.count }} товаров
         {% else %}
           Товары скоро появятся
         {% endif %}
@@ -119,7 +119,7 @@
 
       {% for product in products %}
 
-      <div class="product-card">
+      <div class="product-card" id="product-{{ product.id }}">
 
         <span class="product-image">
 
@@ -153,9 +153,26 @@
           {{ product.price }} ₽
         </span>
 
-        <button type="button" class="product-add">
-          В корзину
-        </button>
+        {% if product.basket %}
+          <div class="product-qty">
+            <form method="post" action="{% url 'users:basket_decrease' product.basket.id %}">
+              {% csrf_token %}
+              <button type="submit" class="product-qty-btn" aria-label="Уменьшить">−</button>
+            </form>
+            <span class="product-qty-value">{{ product.basket.quantity }} шт.</span>
+            <form method="post" action="{% url 'users:basket_add' product.id %}">
+              {% csrf_token %}
+              <button type="submit" class="product-qty-btn" aria-label="Увеличить">+</button>
+            </form>
+          </div>
+        {% else %}
+          <form method="post" action="{% url 'users:basket_add' product.id %}" class="product-add-form">
+            {% csrf_token %}
+            <button type="submit" class="product-add">
+              В корзину
+            </button>
+          </form>
+        {% endif %}
 
       </div>
 
@@ -198,6 +215,35 @@
       {% endfor %}
 
     </div>
+
+    <!-- ==========================================================
+         ПАГИНАЦИЯ
+         ========================================================== -->
+    {% if products.has_other_pages %}
+    <nav class="pagination" aria-label="Страницы каталога">
+
+      {% if products.has_previous %}
+        <a href="{% querystring page=1 %}" class="page-btn">« Первая</a>
+        <a href="{% querystring page=products.previous_page_number %}" class="page-btn">‹ Назад</a>
+      {% else %}
+        <span class="page-btn disabled">« Первая</span>
+        <span class="page-btn disabled">‹ Назад</span>
+      {% endif %}
+
+      <span class="page-current">
+        {{ products.number }} из {{ products.paginator.num_pages }}
+      </span>
+
+      {% if products.has_next %}
+        <a href="{% querystring page=products.next_page_number %}" class="page-btn">Вперёд ›</a>
+        <a href="{% querystring page=products.paginator.num_pages %}" class="page-btn">Последняя »</a>
+      {% else %}
+        <span class="page-btn disabled">Вперёд ›</span>
+        <span class="page-btn disabled">Последняя »</span>
+      {% endif %}
+
+    </nav>
+    {% endif %}
 
   </section>
 

@@ -1,0 +1,76 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link href="{% static 'online_store/css/basket.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-head">
+  <div class="breadcrumb"><a href="{% url 'index' %}">Главная</a> / Корзина</div>
+  <h1 class="page-title">Корзина</h1>
+</div>
+
+<div class="basket-wrap">
+  {% if baskets %}
+  <div class="basket-layout">
+
+    <div class="basket-list">
+      {% for basket in baskets %}
+      <div class="basket-item" id="product-{{ basket.product.id }}">
+        <div class="basket-image">
+          {% if basket.product.image %}
+            <img src="{{ basket.product.image.url }}" alt="{{ basket.product.name }}">
+          {% else %}
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="1"/>
+              <circle cx="17" cy="7" r="1.4"/>
+              <path d="M7 8h5M7 12h8M7 16h5M17 12v6"/>
+            </svg>
+          {% endif %}
+        </div>
+
+        <div class="basket-info">
+          <div class="basket-name">{{ basket.product.name }}</div>
+          <div class="basket-price">{{ basket.product.price }} ₽ / шт.</div>
+        </div>
+
+        <div class="basket-qty">
+          <form method="post" action="{% url 'users:basket_decrease' basket.id %}">
+            {% csrf_token %}
+            <button type="submit" class="qty-btn" aria-label="Уменьшить">−</button>
+          </form>
+          <span class="qty-value">{{ basket.quantity }}</span>
+          <form method="post" action="{% url 'users:basket_add' basket.product.id %}">
+            {% csrf_token %}
+            <button type="submit" class="qty-btn" aria-label="Увеличить">+</button>
+          </form>
+        </div>
+
+        <div class="basket-sum">{{ basket.sum }} ₽</div>
+
+        <form method="post" action="{% url 'users:basket_remove' basket.id %}">
+          {% csrf_token %}
+          <button type="submit" class="remove-btn" aria-label="Удалить">✕</button>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="basket-summary">
+      <h3>Ваш заказ</h3>
+      <div class="summary-row"><span>Товаров</span><span>{{ total_quantity }} шт.</span></div>
+      <div class="summary-total"><span>Итого</span><span>{{ total_sum }} ₽</span></div>
+      <button type="button" class="checkout-btn">Оформить заказ</button>
+    </div>
+
+  </div>
+  {% else %}
+  <div class="basket-box">
+    <p class="basket-placeholder">Корзина пуста. Добавьте товары из каталога.</p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

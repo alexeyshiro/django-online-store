@@ -30,6 +30,5 @@ urlpatterns = [
     path('configurator/', config, name='config'),
     path('users/', include('users.urls', namespace='users')),
     path('products/', include('products.urls', namespace='products')),
-    path('basket/', include('basket.urls', namespace='basket')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

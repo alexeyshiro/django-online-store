@@ -25,7 +25,7 @@
         <a href="#">Контакты</a>
         </nav>
        <div class="header-right">
-      <a class="cart-btn" aria-label="Корзина" href="{% url 'basket:basket' %}">
+      <a class="cart-btn" aria-label="Корзина" href="{% url 'users:basket' %}">
         <svg viewBox="0 0 24 24"><path d="M3 4h2l2.2 11.2a2 2 0 002 1.8h7.6a2 2 0 002-1.7L20 8H6"/><circle cx="9.5" cy="20" r="1.2"/><circle cx="17" cy="20" r="1.2"/></svg>
       </a>
       {% if user.is_authenticated %}

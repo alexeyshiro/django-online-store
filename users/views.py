@@ -4,8 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.views.decorators.http import require_POST
+from products.models import Product
 from users.forms import UserLoginForm, UserRegisterForm
-from users.models import Profile
+from users.models import Basket, Profile
 
 # Create your views here.
 
@@ -123,3 +125,61 @@ def favorites_view(request):
         'title': 'Избранное',
     }
     return render(request, "users/favorites.html", context)
+
+
+@login_required(login_url='users:login')
+def basket_view(request):
+    baskets = Basket.objects.filter(user=request.user).select_related('product')
+    context = {
+        'title': 'Корзина',
+        'baskets': baskets,
+        'total_quantity': sum(basket.quantity for basket in baskets),
+        'total_sum': sum(basket.sum() for basket in baskets),
+    }
+    return render(request, "users/basket.html", context)
+
+
+def redirect_back(request, product_id):
+    # Возвращаем пользователя на страницу, где он нажал кнопку,
+    # и прокручиваем к карточке товара (#product-5)
+    url = request.META.get('HTTP_REFERER', reverse('users:basket'))
+    return HttpResponseRedirect(f'{url}#product-{product_id}')
+
+
+@login_required(login_url='users:login')
+@require_POST
+def basket_add(request, product_id):
+    product = Product.objects.get(id=product_id)
+    basket = Basket.objects.filter(user=request.user, product=product)
+
+    if not basket.exists():
+        Basket.objects.create(user=request.user, product=product, quantity=1)
+    else:
+        basket = basket.first()
+        basket.quantity += 1
+        basket.save()
+
+    return redirect_back(request, product.id)
+
+
+@login_required(login_url='users:login')
+@require_POST
+def basket_decrease(request, basket_id):
+    basket = Basket.objects.get(id=basket_id, user=request.user)
+
+    if basket.quantity > 1:
+        basket.quantity -= 1
+        basket.save()
+    else:
+        basket.delete()
+
+    return redirect_back(request, basket.product_id)
+
+
+@login_required(login_url='users:login')
+@require_POST
+def basket_remove(request, basket_id):
+    basket = Basket.objects.get(id=basket_id, user=request.user)
+    basket.delete()
+
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
