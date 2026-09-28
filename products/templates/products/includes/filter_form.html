@@ -1,0 +1,42 @@
+<!-- БЫСТРЫЕ ФИЛЬТРЫ -->
+
+<div class="filter-quick">
+  <label class="checkbox-row">
+    <input type="checkbox" name="in_stock" value="1" {% if request.GET.in_stock %}checked{% endif %}>
+    <span>В наличии</span>
+  </label>
+</div>
+
+
+<!-- ЦЕНА: в подсказках самая низкая и самая высокая цена в категории -->
+
+<details class="filter-group" open>
+  <summary>Цена</summary>
+  <div class="price-range">
+    <input type="number" name="price_min" min="0" value="{{ request.GET.price_min }}"
+           placeholder="от {{ price_range.min|default_if_none:0|floatformat:0 }}">
+    <span class="dash">—</span>
+    <input type="number" name="price_max" min="0" value="{{ request.GET.price_max }}"
+           placeholder="до {{ price_range.max|default_if_none:0|floatformat:0 }}">
+  </div>
+</details>
+
+
+<!-- ХАРАКТЕРИСТИКИ: группы приходят из view (filters) -->
+
+{% for filter in filters %}
+  {% if filter.values %}
+  <details class="filter-group" {% if filter.selected %}open{% endif %}>
+    <summary>{{ filter.title }}</summary>
+    <div class="filter-options">
+      {% for value in filter.values %}
+        <label class="checkbox-row">
+          <input type="checkbox" name="{{ filter.name }}" value="{{ value }}"
+                 {% if value in filter.selected %}checked{% endif %}>
+          <span>{{ value }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </details>
+  {% endif %}
+{% endfor %}

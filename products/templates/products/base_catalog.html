@@ -11,8 +11,14 @@
      ПАНЕЛЬ КАТАЛОГОВ
      ========================================================== -->
 <nav class="category-switch">
+  <a href="{% url 'products:index' %}"
+     class="cat-tab {% if not category_id %}active{% endif %}">Все товары</a>
+
   {% for category in categories %}
-    <a href="#" class="cat-tab">{{ category.name }}</a>
+    <a href="{% url 'products:category' category.id %}"
+       class="cat-tab {% if category.id == category_id %}active{% endif %}">
+      {{ category.name }}
+    </a>
   {% endfor %}
 </nav>
 
@@ -32,7 +38,7 @@
 
   <div class="top-row">
     {% for product in top_products %}
-    <a href="#" class="top-card">
+    <a href="{% url 'products:product' product.id %}" class="top-card">
       <span class="top-rank">{{ forloop.counter }}</span>
 
       <span class="top-icon">
@@ -44,6 +50,7 @@
       </span>
 
       <span class="top-name">{{ product.name }}</span>
+      <span class="top-sold">продано: {{ product.sold }} шт.</span>
       <span class="top-price">{{ product.price }} ₽</span>
     </a>
 
@@ -79,13 +86,24 @@
        ФИЛЬТРЫ
        ========================================================== -->
 <aside class="filters">
-  <form method="get" action="">
+  {% if category_id %}
+    {% url 'products:category' category_id as catalog_url %}
+  {% else %}
+    {% url 'products:index' as catalog_url %}
+  {% endif %}
 
-    {% include filters_template %}
+  {# action ведёт на первую страницу раздела: после смены фильтров товаров может стать меньше #}
+  <form method="get" action="{{ catalog_url }}" id="filters-form">
+
+    {% include 'products/includes/filter_form.html' %}
 
     <button type="submit" class="all-filters-btn">
       Применить фильтры
     </button>
+
+    {% if request.GET %}
+      <a href="{{ catalog_url }}" class="filters-reset">Сбросить фильтры</a>
+    {% endif %}
 
   </form>
 </aside>
@@ -97,19 +115,18 @@
 
     <div class="product-toolbar">
       <span class="results-count">
-        {% if products %}
-          {{ products.paginator.count }} товаров
-        {% else %}
-          Товары скоро появятся
-        {% endif %}
+        Найдено: {{ products.paginator.count }}
       </span>
 
-      <select class="sort-select" name="sort">
-        <option>По популярности</option>
-        <option>Сначала дешёвые</option>
-        <option>Сначала дорогие</option>
-        <option>По рейтингу</option>
-      </select>
+      {# form="filters-form": select и кнопка стоят вне формы, но отправляются вместе с фильтрами (без JS) #}
+      <div class="sort-box">
+        <select class="sort-select" name="sort" form="filters-form" aria-label="Сортировка">
+          {% for value, label in sorts %}
+            <option value="{{ value }}" {% if value == current_sort %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" form="filters-form" class="sort-btn">Показать</button>
+      </div>
     </div>
 
     <!-- ==========================================================
@@ -123,10 +140,24 @@
 
         <span class="product-image">
 
-          <button type="button" class="product-fav" aria-label="В избранное">
-            <svg viewBox="0 0 24 24"><path d="M12 20.5s-7.2-4.4-9.8-8.7C0.6 8.6 1.9 5 5.4 4.3c2.1-.4 3.9.7 6.6 3.3 2.7-2.6 4.5-3.7 6.6-3.3 3.5.7 4.8 4.3 3.2 7.5-2.6 4.3-9.8 8.7-9.8 8.7z"/></svg>
-          </button>
+          {% if user.is_authenticated %}
+            <form method="post" action="{% url 'users:favorite_toggle' product.id %}" class="product-fav-form">
+              {% csrf_token %}
+              <button type="submit" class="product-fav {% if product.is_favorite %}active{% endif %}"
+                      aria-label="{% if product.is_favorite %}Убрать из избранного{% else %}В избранное{% endif %}"
+                      title="{% if product.is_favorite %}Убрать из избранного{% else %}В избранное{% endif %}">
+                <svg viewBox="0 0 24 24"><path d="M12 20.5s-7.2-4.4-9.8-8.7C0.6 8.6 1.9 5 5.4 4.3c2.1-.4 3.9.7 6.6 3.3 2.7-2.6 4.5-3.7 6.6-3.3 3.5.7 4.8 4.3 3.2 7.5-2.6 4.3-9.8 8.7-9.8 8.7z"/></svg>
+              </button>
+            </form>
+          {% else %}
+            {# гость: сердечко ведёт на вход #}
+            <a href="{% url 'users:login' %}" class="product-fav" aria-label="В избранное" title="Войдите, чтобы добавить в избранное">
+              <svg viewBox="0 0 24 24"><path d="M12 20.5s-7.2-4.4-9.8-8.7C0.6 8.6 1.9 5 5.4 4.3c2.1-.4 3.9.7 6.6 3.3 2.7-2.6 4.5-3.7 6.6-3.3 3.5.7 4.8 4.3 3.2 7.5-2.6 4.3-9.8 8.7-9.8 8.7z"/></svg>
+            </a>
+          {% endif %}
 
+          {# вся картинка — ссылка на страницу товара (сердечко лежит поверх) #}
+          <a href="{% url 'products:product' product.id %}" class="product-image-link" aria-label="{{ product.name }}">
           {% if product.image %}
             <img src="/media/{{ product.image }}" alt="">
           {% else %}
@@ -136,10 +167,11 @@
               <path d="M7 8h5M7 12h8M7 16h5M17 12v6"/>
             </svg>
           {% endif %}
+          </a>
 
         </span>
 
-        <a href="#" class="product-name">
+        <a href="{% url 'products:product' product.id %}" class="product-name">
           {{ product.name }}
         </a>
 
@@ -174,43 +206,28 @@
           </form>
         {% endif %}
 
+        {% if product.in_config %}
+          <a href="{% url 'config' %}" class="product-config active">В конфигураторе ✓</a>
+        {% else %}
+          <form method="post" action="{% url 'config_add' product.id %}" class="product-add-form">
+            {% csrf_token %}
+            <button type="submit" class="product-config">
+              В конфигуратор
+            </button>
+          </form>
+        {% endif %}
+
       </div>
 
       {% empty %}
 
-        {% for i in "123456" %}
-
-        <div class="product-card placeholder">
-
-          <span class="product-image">
-
-            <svg viewBox="0 0 24 24">
-              <rect x="3" y="3" width="18" height="18" rx="1"/>
-              <circle cx="17" cy="7" r="1.4"/>
-              <path d="M7 8h5M7 12h8M7 16h5M17 12v6"/>
-            </svg>
-
-          </span>
-
-          <span class="product-name">
-            Товар скоро появится
-          </span>
-
-          <span class="product-specs">
-            —
-          </span>
-
-          <span class="product-price">
-            —
-          </span>
-
-          <button class="product-add" disabled>
-            Нет в продаже
-          </button>
-
+        <div class="product-empty">
+          <p class="product-empty-title">Ничего не найдено</p>
+          {% if request.GET %}
+            <p class="product-empty-text">Попробуйте изменить или сбросить фильтры.</p>
+            <a href="{{ catalog_url }}" class="filters-reset">Сбросить фильтры</a>
+          {% endif %}
         </div>
-
-        {% endfor %}
 
       {% endfor %}
 
@@ -223,8 +240,13 @@
     <nav class="pagination" aria-label="Страницы каталога">
 
       {% if products.has_previous %}
-        <a href="{% querystring page=1 %}" class="page-btn">« Первая</a>
-        <a href="{% querystring page=products.previous_page_number %}" class="page-btn">‹ Назад</a>
+        {% if category_id %}
+          <a href="{% url 'products:category_page' category_id 1 %}{% querystring %}" class="page-btn">« Первая</a>
+          <a href="{% url 'products:category_page' category_id products.previous_page_number %}{% querystring %}" class="page-btn">‹ Назад</a>
+        {% else %}
+          <a href="{% url 'products:page' 1 %}{% querystring %}" class="page-btn">« Первая</a>
+          <a href="{% url 'products:page' products.previous_page_number %}{% querystring %}" class="page-btn">‹ Назад</a>
+        {% endif %}
       {% else %}
         <span class="page-btn disabled">« Первая</span>
         <span class="page-btn disabled">‹ Назад</span>
@@ -235,8 +257,13 @@
       </span>
 
       {% if products.has_next %}
-        <a href="{% querystring page=products.next_page_number %}" class="page-btn">Вперёд ›</a>
-        <a href="{% querystring page=products.paginator.num_pages %}" class="page-btn">Последняя »</a>
+        {% if category_id %}
+          <a href="{% url 'products:category_page' category_id products.next_page_number %}{% querystring %}" class="page-btn">Вперёд ›</a>
+          <a href="{% url 'products:category_page' category_id products.paginator.num_pages %}{% querystring %}" class="page-btn">Последняя »</a>
+        {% else %}
+          <a href="{% url 'products:page' products.next_page_number %}{% querystring %}" class="page-btn">Вперёд ›</a>
+          <a href="{% url 'products:page' products.paginator.num_pages %}{% querystring %}" class="page-btn">Последняя »</a>
+        {% endif %}
       {% else %}
         <span class="page-btn disabled">Вперёд ›</span>
         <span class="page-btn disabled">Последняя »</span>

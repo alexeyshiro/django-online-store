@@ -1,8 +1,6 @@
 
+/* красный и чёрный берутся из base.css — одинаковые на всём сайте */
 :root{
-    --red: #e11d2e;
-    --red-dark: #c8172a;
-    --black: #16181c;
     --gray-text: #6b7280;
     --gray-border: #e6e7eb;
     --gray-bg: #f6f7f8;
@@ -10,11 +8,12 @@
   *{ box-sizing: border-box; }
   body{
     margin:0;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    color:#1a1a1a;
+    font-family:'Inter', sans-serif;   /* как на остальных страницах */
+    color:var(--text);
     background:#fff;
   }
   a{ text-decoration:none; color:inherit; }
+  button{ font-family:inherit; }   /* кнопки по умолчанию не наследуют шрифт страницы */
 
   /* ===== HEADER ===== */
 
@@ -32,6 +31,7 @@
   }
   .breadcrumb a:hover{ color:var(--red); }
   h1.page-title{
+    font-family:'Manrope', sans-serif;
     font-size:32px;
     font-weight:800;
     margin:0 0 24px 0;
@@ -191,3 +191,60 @@
   .buy-btn:hover{ background: var(--red-dark); }
 
 /* ===== FOOTER ===== */
+/* ===== ВЫБРАННЫЙ ТОВАР В СТРОКЕ ===== */
+  .comp-right{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    min-width:0;
+  }
+  .comp-right form{ margin:0; }
+  .comp-chosen{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    text-align:right;
+    min-width:0;
+  }
+  .comp-product{
+    font-size:14px;
+    font-weight:600;
+    max-width:260px;
+  }
+  .comp-product:hover{ color:var(--red); text-decoration:underline; }
+  .comp-price{ font-size:14px; font-weight:800; margin-top:2px; }
+  .comp-remove{
+    background:none;
+    border:none;
+    color:var(--gray-text);
+    font-size:16px;
+    cursor:pointer;
+    padding:6px;
+  }
+  .comp-remove:hover{ color:var(--red); }
+  a.add-btn{ display:inline-block; }
+
+  @media (max-width: 900px){
+    .page-head{ padding:20px 20px 0; }
+    .wrap{ grid-template-columns:1fr; padding:0 20px 40px; }
+    .comp-row{ flex-wrap:wrap; gap:12px; }
+    .comp-chosen{ align-items:flex-start; text-align:left; }
+  }
+
+/* ===== КНОПКА «ДОБАВИТЬ В КОРЗИНУ» ===== */
+  .summary-card form{ margin:0; }
+  a.buy-btn{ display:block; text-align:center; }
+  .buy-btn:disabled{ background:#3a3c41; color:#8b8d92; cursor:default; }
+  .buy-hint{ margin:10px 0 0; font-size:12.5px; color:#8b8d92; text-align:center; }
+
+/* ===== СТРОКА С НЕСКОЛЬКИМИ ТОВАРАМИ (хранение данных) ===== */
+  .comp-right-multi{ flex-direction:column; align-items:flex-end; gap:10px; }
+  .comp-list{ display:flex; flex-direction:column; gap:8px; }
+  .comp-list-item{ display:flex; align-items:center; justify-content:flex-end; gap:10px; }
+  .comp-list-item + .comp-list-item{ padding-top:8px; border-top:1px dashed var(--gray-border); }
+
+  @media (max-width: 900px){
+    .comp-right-multi{ align-items:flex-start; width:100%; }
+    .comp-list{ width:100%; }
+    .comp-list-item{ justify-content:space-between; }
+  }

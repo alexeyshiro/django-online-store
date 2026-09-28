@@ -5,10 +5,16 @@
     <link href="{% static 'online_store/css/config.css' %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
+<div class="page-head">
+  <div class="breadcrumb"><a href="{% url 'index' %}">Главная</a> / Конфигуратор ПК</div>
+  <h1 class="page-title">Конфигуратор ПК</h1>
+</div>
+
+<div class="wrap">
 <div class="config-card">
       <div class="config-card-header">
-        <h2>Обязательные комплектующие</h2>
-        <div class="progress">0 / 8</div>
+        <h2>Комплектующие</h2>
+        <div class="progress">Обязательных выбрано: {{ required_done }} / {{ required_count }}</div>
       </div>
 
       <div class="comp-row">
@@ -21,7 +27,7 @@
             <div class="comp-tag required">Обязательно</div>
           </div>
         </div>
-        <button class="add-btn">Добавить</button>
+        {% include 'products/includes/config_slot.html' with slot=slots.cpu %}
       </div>
 
       <div class="comp-row">
@@ -34,7 +40,7 @@
             <div class="comp-tag required">Обязательно</div>
           </div>
         </div>
-        <button class="add-btn">Добавить</button>
+        {% include 'products/includes/config_slot.html' with slot=slots.motherboard %}
       </div>
 
       <div class="comp-row">
@@ -47,7 +53,7 @@
             <div class="comp-tag required">Обязательно</div>
           </div>
         </div>
-        <button class="add-btn">Добавить</button>
+        {% include 'products/includes/config_slot.html' with slot=slots.ram %}
       </div>
 
       <div class="comp-row">
@@ -60,7 +66,7 @@
             <div class="comp-tag">Опционально</div>
           </div>
         </div>
-        <button class="add-btn">Добавить</button>
+        {% include 'products/includes/config_slot.html' with slot=slots.gpu %}
       </div>
 
       <div class="comp-row">
@@ -73,7 +79,7 @@
             <div class="comp-tag required">Обязательно</div>
           </div>
         </div>
-        <button class="add-btn">Добавить</button>
+        {% include 'products/includes/config_slot.html' with slot=slots.storage %}
       </div>
 
       <div class="comp-row">
@@ -86,7 +92,7 @@
             <div class="comp-tag required">Обязательно</div>
           </div>
         </div>
-        <button class="add-btn">Добавить</button>
+        {% include 'products/includes/config_slot.html' with slot=slots.cooling %}
       </div>
 
       <div class="comp-row">
@@ -99,7 +105,7 @@
             <div class="comp-tag required">Обязательно</div>
           </div>
         </div>
-        <button class="add-btn">Добавить</button>
+        {% include 'products/includes/config_slot.html' with slot=slots.case %}
       </div>
 
       <div class="comp-row">
@@ -112,7 +118,7 @@
             <div class="comp-tag required">Обязательно</div>
           </div>
         </div>
-        <button class="add-btn">Добавить</button>
+        {% include 'products/includes/config_slot.html' with slot=slots.psu %}
       </div>
 
       <div class="comp-row">
@@ -125,7 +131,7 @@
             <div class="comp-tag">Опционально</div>
           </div>
         </div>
-        <button class="add-btn">Добавить</button>
+        {% include 'products/includes/config_slot.html' with slot=slots.fans %}
       </div>
     </div>
 
@@ -142,10 +148,22 @@
 
       <div class="summary-card">
         <h3>Ваша сборка</h3>
-        <div class="summary-row"><span>Выбрано компонентов</span><span>0 / 8</span></div>
-        <div class="summary-total"><span>Итого</span><span>0 ₽</span></div>
-        <button class="buy-btn">Добавить в корзину</button>
+        <div class="summary-row"><span>Выбрано компонентов</span><span>{{ selected_count }} / {{ slots_count }}</span></div>
+        <div class="summary-total"><span>Итого</span><span>{{ total }} ₽</span></div>
+        {% if not selected_count %}
+          <button type="button" class="buy-btn" disabled>Добавить в корзину</button>
+          <p class="buy-hint">Сначала выберите комплектующие</p>
+        {% elif user.is_authenticated %}
+          <form method="post" action="{% url 'config_to_basket' %}">
+            {% csrf_token %}
+            <button type="submit" class="buy-btn">Добавить в корзину</button>
+          </form>
+        {% else %}
+          {# гость: корзина есть только у вошедших, сборка в сессии сохранится #}
+          <a href="{% url 'users:login' %}" class="buy-btn">Войдите, чтобы добавить в корзину</a>
+        {% endif %}
       </div>
     </div>
+</div>
 
 {% endblock %}

@@ -1,0 +1,163 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block css %}
+    {# catalog.css — общие цвета и кнопки («В корзину», «В конфигуратор», счётчик) #}
+    <link href="{% static 'online_store/css/catalog.css' %}" rel="stylesheet">
+    <link href="{% static 'online_store/css/product.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-head">
+  <div class="breadcrumb">
+    <a href="{% url 'index' %}">Главная</a> /
+    <a href="{% url 'products:index' %}">Каталог</a> /
+    <a href="{% url 'products:category' product.category_id %}">{{ product.category.name }}</a> /
+    {{ product.name }}
+  </div>
+</div>
+
+{# id нужен, чтобы после «В корзину» / сердечка страница вернулась сюда же #}
+<div class="product-page" id="product-{{ product.id }}">
+
+  <!-- ==========================================================
+       ФОТО
+       ========================================================== -->
+  <div class="pp-image">
+    {% if product.image %}
+      <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% else %}
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="1"/>
+        <circle cx="17" cy="7" r="1.4"/>
+        <path d="M7 8h5M7 12h8M7 16h5M17 12v6"/>
+      </svg>
+    {% endif %}
+  </div>
+
+  <!-- ==========================================================
+       ПОКУПКА
+       ========================================================== -->
+  <div class="pp-buy">
+    <h1 class="pp-title">{{ product.name }}</h1>
+
+    <div class="pp-meta">
+      <span>{{ product.category.name }}</span>
+      {% if sold %}<span>· продано {{ sold }} шт.</span>{% endif %}
+    </div>
+
+    {% if product.short_description %}
+      <p class="pp-short">{{ product.short_description }}</p>
+    {% endif %}
+
+    <div class="pp-price">{{ product.price }} ₽</div>
+
+    {% if product.quantity %}
+      <div class="pp-stock in">В наличии: {{ product.quantity }} шт.</div>
+    {% else %}
+      <div class="pp-stock out">Нет в наличии</div>
+    {% endif %}
+
+    <div class="pp-actions">
+      {% if basket %}
+        <div class="product-qty">
+          <form method="post" action="{% url 'users:basket_decrease' basket.id %}">
+            {% csrf_token %}
+            <button type="submit" class="product-qty-btn" aria-label="Уменьшить">−</button>
+          </form>
+          <span class="product-qty-value">{{ basket.quantity }} шт. в корзине</span>
+          <form method="post" action="{% url 'users:basket_add' product.id %}">
+            {% csrf_token %}
+            <button type="submit" class="product-qty-btn" aria-label="Увеличить">+</button>
+          </form>
+        </div>
+      {% else %}
+        <form method="post" action="{% url 'users:basket_add' product.id %}" class="product-add-form">
+          {% csrf_token %}
+          <button type="submit" class="product-add">В корзину</button>
+        </form>
+      {% endif %}
+
+      {% if in_config %}
+        <a href="{% url 'config' %}" class="product-config active">В конфигураторе ✓</a>
+      {% else %}
+        <form method="post" action="{% url 'config_add' product.id %}" class="product-add-form">
+          {% csrf_token %}
+          <button type="submit" class="product-config">В конфигуратор</button>
+        </form>
+      {% endif %}
+
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'users:favorite_toggle' product.id %}" class="product-add-form">
+          {% csrf_token %}
+          <button type="submit" class="pp-fav {% if is_favorite %}active{% endif %}">
+            <svg viewBox="0 0 24 24"><path d="M12 20.5s-7.2-4.4-9.8-8.7C0.6 8.6 1.9 5 5.4 4.3c2.1-.4 3.9.7 6.6 3.3 2.7-2.6 4.5-3.7 6.6-3.3 3.5.7 4.8 4.3 3.2 7.5-2.6 4.3-9.8 8.7-9.8 8.7z"/></svg>
+            {% if is_favorite %}В избранном{% else %}В избранное{% endif %}
+          </button>
+        </form>
+      {% else %}
+        <a href="{% url 'users:login' %}" class="pp-fav">
+          <svg viewBox="0 0 24 24"><path d="M12 20.5s-7.2-4.4-9.8-8.7C0.6 8.6 1.9 5 5.4 4.3c2.1-.4 3.9.7 6.6 3.3 2.7-2.6 4.5-3.7 6.6-3.3 3.5.7 4.8 4.3 3.2 7.5-2.6 4.3-9.8 8.7-9.8 8.7z"/></svg>
+          В избранное
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- ==========================================================
+     ОПИСАНИЕ И ХАРАКТЕРИСТИКИ
+     ========================================================== -->
+<div class="pp-details">
+
+  <section class="pp-section">
+    <h2 class="section-title">Характеристики</h2>
+    {% if specs %}
+      <dl class="pp-specs">
+        {% for title, value in specs %}
+          <div class="pp-spec">
+            <dt>{{ title }}</dt>
+            <dd>{{ value }}</dd>
+          </div>
+        {% endfor %}
+      </dl>
+    {% else %}
+      <p class="pp-empty">Характеристики пока не заполнены.</p>
+    {% endif %}
+  </section>
+
+  <section class="pp-section">
+    <h2 class="section-title">Описание</h2>
+    {% if product.description %}
+      <p class="pp-description">{{ product.description|linebreaksbr }}</p>
+    {% else %}
+      <p class="pp-empty">Описание пока не добавлено.</p>
+    {% endif %}
+  </section>
+
+  {% if similar %}
+  <section class="pp-section">
+    <h2 class="section-title">Другие товары в разделе «{{ product.category.name }}»</h2>
+    <div class="pp-similar">
+      {% for item in similar %}
+        <a href="{% url 'products:product' item.id %}" class="pp-similar-card">
+          <span class="pp-similar-image">
+            {% if item.image %}
+              <img src="{{ item.image.url }}" alt="">
+            {% else %}
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="17" cy="7" r="1.4"/><path d="M7 8h5M7 12h8M7 16h5M17 12v6"/></svg>
+            {% endif %}
+          </span>
+          <span class="pp-similar-name">{{ item.name }}</span>
+          <span class="pp-similar-price">{{ item.price }} ₽</span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+</div>
+
+{% endblock %}

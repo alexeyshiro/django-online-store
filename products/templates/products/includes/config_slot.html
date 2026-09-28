@@ -1,0 +1,42 @@
+{% comment %}
+  Правая часть строки конфигуратора.
+  Передаётся slot = {'category_id': ..., 'multi': можно ли несколько товаров, 'products': [...], 'product': первый или None}
+{% endcomment %}
+
+<div class="comp-right {% if slot.multi and slot.products %}comp-right-multi{% endif %}">
+  {% if slot.multi and slot.products %}
+    {# несколько товаров: у каждого своя строка с крестиком, внизу «Добавить ещё» #}
+    <div class="comp-list">
+      {% for product in slot.products %}
+        <div class="comp-list-item">
+          <div class="comp-chosen">
+            <a href="{% url 'products:product' product.id %}" class="comp-product">{{ product.name }}</a>
+            <span class="comp-price">{{ product.price }} ₽</span>
+          </div>
+          <form method="post" action="{% url 'config_remove' product.id %}">
+            {% csrf_token %}
+            <button type="submit" class="comp-remove" aria-label="Убрать из сборки" title="Убрать из сборки">✕</button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+    <a href="{% url 'products:category' slot.category_id %}" class="add-btn">Добавить ещё</a>
+
+  {% elif slot.product %}
+    <div class="comp-chosen">
+      <a href="{% url 'products:product' slot.product.id %}" class="comp-product">{{ slot.product.name }}</a>
+      <span class="comp-price">{{ slot.product.price }} ₽</span>
+    </div>
+
+    <a href="{% url 'products:category' slot.category_id %}" class="add-btn">Заменить</a>
+
+    <form method="post" action="{% url 'config_remove' slot.product.id %}">
+      {% csrf_token %}
+      <button type="submit" class="comp-remove" aria-label="Убрать из сборки" title="Убрать из сборки">✕</button>
+    </form>
+
+  {% else %}
+    {# ведёт в каталог нужного раздела, там кнопка «В конфигуратор» вернёт товар сюда #}
+    <a href="{% url 'products:category' slot.category_id %}" class="add-btn">Добавить</a>
+  {% endif %}
+</div>

@@ -3,6 +3,7 @@
 
 {% block css %}
     <link href="{% static 'online_store/css/account.css' %}" rel="stylesheet">
+    <link href="{% static 'online_store/css/basket.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -25,8 +26,55 @@
 
   <div class="account-main">
     <section class="account-card">
-      <h2 class="section-title">Избранные товары</h2>
-      <p class="account-placeholder">Раздел в разработке. Здесь появятся товары, которые вы добавите в избранное.</p>
+      <h2 class="section-title">Избранные товары{% if favorites %} ({{ favorites|length }}){% endif %}</h2>
+
+      {% if favorites %}
+      <div class="basket-list">
+        {% for favorite in favorites %}
+        <div class="basket-item" id="product-{{ favorite.product.id }}">
+          <div class="basket-image">
+            {% if favorite.product.image %}
+              <img src="{{ favorite.product.image.url }}" alt="{{ favorite.product.name }}">
+            {% else %}
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="1"/>
+                <circle cx="17" cy="7" r="1.4"/>
+                <path d="M7 8h5M7 12h8M7 16h5M17 12v6"/>
+              </svg>
+            {% endif %}
+          </div>
+
+          <div class="basket-info">
+            <a href="{% url 'products:product' favorite.product.id %}" class="basket-name fav-name">{{ favorite.product.name }}</a>
+            <div class="basket-price">
+              {{ favorite.product.category.name }}
+              {% if not favorite.product.quantity %} · нет в наличии{% endif %}
+            </div>
+          </div>
+
+          <div class="basket-sum">{{ favorite.product.price }} ₽</div>
+
+          {% if favorite.product.id in basket_product_ids %}
+            <a href="{% url 'users:basket' %}" class="fav-basket-btn in-basket">В корзине</a>
+          {% else %}
+            <form method="post" action="{% url 'users:basket_add' favorite.product.id %}">
+              {% csrf_token %}
+              <button type="submit" class="fav-basket-btn">В корзину</button>
+            </form>
+          {% endif %}
+
+          <form method="post" action="{% url 'users:favorite_toggle' favorite.product.id %}">
+            {% csrf_token %}
+            <button type="submit" class="remove-btn" aria-label="Убрать из избранного" title="Убрать из избранного">✕</button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+        <p class="account-placeholder">
+          В избранном пока пусто. Нажмите на сердечко у товара в <a href="{% url 'products:index' %}">каталоге</a>, чтобы добавить его сюда.
+        </p>
+      {% endif %}
     </section>
   </div>
 

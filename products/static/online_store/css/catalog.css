@@ -124,6 +124,7 @@ body{ font-family:'Inter', sans-serif; color:var(--text); }
 .top-icon svg{ width:20px; height:20px; stroke:#fff; fill:none; stroke-width:1.7; }
 .top-name{ font-size:13.5px; font-weight:700; line-height:1.3; }
 .top-price{ font-size:14px; font-weight:800; color:var(--red); margin-top:auto; }
+.top-sold{ font-size:12px; font-weight:600; color:var(--text-dim2); }
 
 /* ==========================================================
    ОБЩИЙ ДВУХКОЛОНОЧНЫЙ МАКЕТ: ФИЛЬТРЫ + ТОВАРЫ
@@ -233,6 +234,10 @@ body{ font-family:'Inter', sans-serif; color:var(--text); }
   transition:border-color .15s ease;
 }
 .price-range input:focus{ border-color:var(--red); }
+/* без стрелок-счётчиков у number: иначе подсказка «до 150000» обрезается */
+.price-range input{ min-width:0; -moz-appearance:textfield; appearance:textfield; }
+.price-range input::-webkit-inner-spin-button,
+.price-range input::-webkit-outer-spin-button{ -webkit-appearance:none; margin:0; }
 .price-range .dash{ color:var(--text-dim2); }
 
 .all-filters-btn{
@@ -270,6 +275,20 @@ body{ font-family:'Inter', sans-serif; color:var(--text); }
   background:#fff;
   cursor:pointer;
 }
+.sort-box{ display:flex; align-items:center; gap:8px; }
+.sort-btn{
+  font-family:'Inter', sans-serif;
+  font-size:13.5px;
+  font-weight:700;
+  color:#fff;
+  background:var(--black);
+  border:none;
+  padding:10px 16px;
+  border-radius:0 8px 0 8px;
+  cursor:pointer;
+  transition:background .15s ease;
+}
+.sort-btn:hover{ background:var(--red); }
 
 .product-grid{
   display:grid;
@@ -330,6 +349,10 @@ body{ font-family:'Inter', sans-serif; color:var(--text); }
 .product-fav svg{ width:15px; height:15px; stroke:var(--black); fill:none; stroke-width:1.8; transition:stroke .15s ease; }
 .product-fav:hover{ background:#fff; transform:scale(1.08); }
 .product-fav:hover svg{ stroke:var(--red); }
+/* товар в избранном — закрашенное красное сердечко */
+.product-fav.active svg{ stroke:var(--red); fill:var(--red); }
+/* форма вокруг кнопки не должна занимать место в картинке */
+.product-fav-form{ display:contents; }
 
 .product-image img{
   width:100%;
@@ -442,3 +465,66 @@ a.page-btn:hover{ border-color:var(--red); color:var(--red); }
 }
 .product-qty-btn:hover{ background:var(--red-dark); }
 .product-qty-value{ font-weight:700; font-size:14px; color:var(--black); }
+
+.product-config{
+  width:100%;
+  background:#fff;
+  color:var(--red);
+  border:2px solid var(--red);
+  font-weight:700;
+  font-size:13px;
+  padding:9px;
+  border-radius:0 8px 0 8px;
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.product-config:hover{ background:var(--red); color:#fff; }
+
+/* ==========================================================
+   СБРОС ФИЛЬТРОВ И «НИЧЕГО НЕ НАЙДЕНО»
+   ========================================================== */
+.filters-reset{
+  display:block;
+  margin-top:10px;
+  text-align:center;
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-dim2);
+  text-decoration:underline;
+}
+.filters-reset:hover{ color:var(--red); }
+
+.product-empty{
+  grid-column:1 / -1;
+  padding:48px 20px;
+  text-align:center;
+  background:var(--bg-alt);
+  border:1px dashed var(--border);
+  border-radius:0 12px 0 12px;
+}
+.product-empty-title{ margin:0; font-size:20px; font-weight:800; color:var(--black); }
+.product-empty-text{ margin:8px 0 0; font-size:14px; color:var(--text-dim2); }
+.product-empty .filters-reset{ display:inline-block; }
+
+/* после «В корзину» / сердечка страница прокручивается к #product-N —
+   отступ, чтобы карточка не пряталась под закреплённой шапкой */
+.product-card{ scroll-margin-top:100px; }
+
+/* цена и кнопки прижаты к низу карточки: при названии в 2 строки
+   кнопки в одном ряду всё равно стоят на одной линии */
+.product-card .product-price{ margin-top:auto; }
+
+/* товар уже в сборке: ссылка на конфигуратор, закрашенная кнопка */
+a.product-config{ display:block; text-align:center; box-sizing:border-box; }
+.product-config.active{ background:var(--red); color:#fff; }
+.product-config.active:hover{ background:var(--red-dark); border-color:var(--red-dark); }
+
+/* картинка карточки — ссылка на страницу товара на всю площадь, сердечко (z-index:2) поверх */
+.product-image-link{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}

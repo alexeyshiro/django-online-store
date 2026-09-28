@@ -2,19 +2,19 @@ from django.contrib import messages, auth
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 from products.models import Product
-from users.forms import UserLoginForm, UserRegisterForm
-from users.models import Basket, Profile
+from users.forms import UserLoginForm, UserRegisterForm, get_password_errors
+from users.models import Basket, Favorite, Order, Profile
 
 # Create your views here.
 
 
 def login_view(request):
     if request.method == 'POST':
-        print(request.POST)
         form = UserLoginForm(data=request.POST)
         if form.is_valid():
             username = request.POST['username']
@@ -88,8 +88,9 @@ def account_view(request):
                 messages.error(request, 'Текущий пароль указан неверно')
             elif new_password != new_password2:
                 messages.error(request, 'Новые пароли не совпадают')
-            elif len(new_password) < 8:
-                messages.error(request, 'Новый пароль должен быть не короче 8 символов')
+            elif password_errors := get_password_errors(new_password, request.user):
+                for error in password_errors:
+                    messages.error(request, error)
             else:
                 request.user.set_password(new_password)
                 request.user.save()
@@ -113,18 +114,39 @@ def account_view(request):
 
 @login_required(login_url='users:login')
 def history_view(request):
+    orders = Order.objects.filter(user=request.user).prefetch_related('items__product')
     context = {
         'title': 'История покупок',
+        'orders': orders,
     }
     return render(request, "users/history.html", context)
 
 
 @login_required(login_url='users:login')
 def favorites_view(request):
+    favorites = Favorite.objects.filter(user=request.user).select_related('product').order_by('-created')
+    basket_product_ids = set(Basket.objects.filter(user=request.user).values_list('product_id', flat=True))
     context = {
         'title': 'Избранное',
+        'favorites': favorites,
+        'basket_product_ids': basket_product_ids,
     }
     return render(request, "users/favorites.html", context)
+
+
+@login_required(login_url='users:login')
+@require_POST
+def favorite_toggle(request, product_id):
+    # Одна кнопка-сердечко: если товар уже в избранном — убираем, иначе добавляем
+    product = get_object_or_404(Product, id=product_id)
+    favorite = Favorite.objects.filter(user=request.user, product=product)
+
+    if favorite.exists():
+        favorite.delete()
+    else:
+        Favorite.objects.create(user=request.user, product=product)
+
+    return redirect_back(request, product.id)
 
 
 @login_required(login_url='users:login')
@@ -139,17 +161,24 @@ def basket_view(request):
     return render(request, "users/basket.html", context)
 
 
+def get_back_url(request):
+    # Страница, где пользователь нажал кнопку. Если браузер её не передал или это чужой сайт — корзина.
+    url = request.META.get('HTTP_REFERER', '')
+    if not url_has_allowed_host_and_scheme(url, allowed_hosts={request.get_host()}):
+        return reverse('users:basket')
+    return url.split('#')[0]    # старый #product-N убираем, чтобы якоря не накапливались
+
+
 def redirect_back(request, product_id):
     # Возвращаем пользователя на страницу, где он нажал кнопку,
     # и прокручиваем к карточке товара (#product-5)
-    url = request.META.get('HTTP_REFERER', reverse('users:basket'))
-    return HttpResponseRedirect(f'{url}#product-{product_id}')
+    return HttpResponseRedirect(f'{get_back_url(request)}#product-{product_id}')
 
 
 @login_required(login_url='users:login')
 @require_POST
 def basket_add(request, product_id):
-    product = Product.objects.get(id=product_id)
+    product = get_object_or_404(Product, id=product_id)
     basket = Basket.objects.filter(user=request.user, product=product)
 
     if not basket.exists():
@@ -165,7 +194,7 @@ def basket_add(request, product_id):
 @login_required(login_url='users:login')
 @require_POST
 def basket_decrease(request, basket_id):
-    basket = Basket.objects.get(id=basket_id, user=request.user)
+    basket = get_object_or_404(Basket, id=basket_id, user=request.user)
 
     if basket.quantity > 1:
         basket.quantity -= 1
@@ -179,7 +208,7 @@ def basket_decrease(request, basket_id):
 @login_required(login_url='users:login')
 @require_POST
 def basket_remove(request, basket_id):
-    basket = Basket.objects.get(id=basket_id, user=request.user)
+    basket = get_object_or_404(Basket, id=basket_id, user=request.user)
     basket.delete()
 
-    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+    return HttpResponseRedirect(get_back_url(request))

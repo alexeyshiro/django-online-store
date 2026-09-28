@@ -25,8 +25,30 @@
 
   <div class="account-main">
     <section class="account-card">
-      <h2 class="section-title">Ваши заказы</h2>
-      <p class="account-placeholder">Раздел в разработке. Здесь появится история ваших покупок.</p>
+      <h2 class="section-title">Ваши заказы{% if orders %} ({{ orders|length }}){% endif %}</h2>
+
+      {% for order in orders %}
+        <div class="order">
+          <div class="order-head">
+            <span class="order-number">Заказ №{{ order.id }}</span>
+            <span class="order-date">от {{ order.created|date:"d.m.Y" }}</span>
+            <span class="order-status">{{ order.status }}</span>
+            <span class="order-total">{{ order.total }} ₽</span>
+          </div>
+
+          <div class="order-items">
+            {% for item in order.items.all %}
+              <div class="order-item">
+                <a href="{% url 'products:product' item.product.id %}" class="order-item-name">{{ item.product.name }}</a>
+                <span class="order-item-qty">{{ item.quantity }} шт. × {{ item.price }} ₽</span>
+                <span class="order-item-sum">{{ item.sum }} ₽</span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% empty %}
+        <p class="account-placeholder">Вы ещё ничего не покупали. Загляните в <a href="{% url 'products:index' %}">каталог</a>.</p>
+      {% endfor %}
     </section>
   </div>
 

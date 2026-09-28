@@ -149,3 +149,6 @@ body{
   .basket-item{ flex-wrap:wrap; }
   .basket-sum{ width:auto; }
 }
+
+/* отступ при прокрутке к #product-N, чтобы строка не пряталась под шапкой */
+.basket-item{ scroll-margin-top:100px; }

@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from products.views import index, config
+from products.views import index, config, config_add, config_remove, config_to_basket
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -28,6 +28,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index, name='index'),
     path('configurator/', config, name='config'),
+    path('configurator/add/<int:product_id>/', config_add, name='config_add'),
+    path('configurator/remove/<int:product_id>/', config_remove, name='config_remove'),
+    path('configurator/to-basket/', config_to_basket, name='config_to_basket'),
     path('users/', include('users.urls', namespace='users')),
     path('products/', include('products.urls', namespace='products')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
