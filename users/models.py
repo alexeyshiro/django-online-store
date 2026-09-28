@@ -68,3 +68,5 @@ class OrderItem(models.Model):
 
     def sum(self):
         return self.price * self.quantity
+
+
