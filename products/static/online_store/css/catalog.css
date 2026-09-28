@@ -1,20 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-
-:root{
-  --bg:#FFFFFF;
-  --bg-alt:#F6F6F6;
-  --border:#E6E6E6;
-  --black:#141414;
-  --black-soft:#232323;
-  --red:#E4232B;
-  --red-dark:#B91922;
-  --red-tint:#FCEBEC;
-  --text:#161616;
-  --text-dim:#5C6065;
-  --text-dim2:#9A9EA2;
-}
-
-*{ box-sizing:border-box; }
+/* шрифты, цвета (:root) и базовый сброс — в base.css */
 body{ font-family:'Inter', sans-serif; color:var(--text); }
 
 /* ==========================================================
@@ -122,6 +106,18 @@ body{ font-family:'Inter', sans-serif; color:var(--text); }
   justify-content:center;
 }
 .top-icon svg{ width:20px; height:20px; stroke:#fff; fill:none; stroke-width:1.7; }
+/* фото товара в топ-5: белая подложка, картинка целиком без обрезки */
+.top-image{
+  width:100%;
+  height:110px;
+  background:#fff;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.top-image img{ max-width:100%; max-height:100%; object-fit:contain; }
 .top-name{ font-size:13.5px; font-weight:700; line-height:1.3; }
 .top-price{ font-size:14px; font-weight:800; color:var(--red); margin-top:auto; }
 .top-sold{ font-size:12px; font-weight:600; color:var(--text-dim2); }
@@ -173,11 +169,6 @@ body{ font-family:'Inter', sans-serif; color:var(--text); }
   accent-color:var(--red);
   flex-shrink:0;
   cursor:pointer;
-}
-.badge-shield{
-  color:#2E9E5B;
-  font-size:12px;
-  font-weight:800;
 }
 
 /* группы фильтров через <details>/<summary> — раскрытие
@@ -363,7 +354,6 @@ body{ font-family:'Inter', sans-serif; color:var(--text); }
 
 .product-name{ font-size:14.5px; font-weight:700; line-height:1.3; }
 a.product-name:hover{ color:var(--red); text-decoration:underline; }
-.product-specs{ font-size:12.5px; color:var(--text-dim2); font-weight:600; text-transform:uppercase; letter-spacing:0.2px; }
 .product-price{ font-size:17px; font-weight:800; color:var(--black); margin-top:2px; }
 
 .product-add{

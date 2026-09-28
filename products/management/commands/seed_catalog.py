@@ -27,16 +27,6 @@ CATEGORIES = [
     ('Вентиляторы', []),
 ]
 
-# Характеристики для товаров, которые уже были в базе (цена и остальное не меняются).
-EXISTING = {
-    '4070': dict(chip_vendor='NVIDIA', series='GeForce RTX 40', memory=12, memory_type='GDDR6X',
-                 bus_width=192, pcie='4.0', color='Чёрный', rgb='Нет'),
-    '5080': dict(chip_vendor='NVIDIA', series='GeForce RTX 50', memory=16, memory_type='GDDR7',
-                 bus_width=256, pcie='5.0', color='Чёрный', rgb='Есть'),
-    '9 5900xt': dict(brand='AMD', series='Ryzen 9', socket='AM4', cores=16, threads=32,
-                     integrated_graphics='Нет', tdp=105, package='BOX', memory_type='DDR4'),
-}
-
 PRODUCTS = {
     'Видеокарты': [
         dict(name='Palit GeForce RTX 4060 Dual 8 ГБ', price=32999, quantity=7,
@@ -148,9 +138,6 @@ class Command(BaseCommand):
             category, created = ProductCategory.objects.get_or_create(name=name)
             categories[name] = category
             self.stdout.write(f'{category.id:>3}  {name}' + ('  (создана)' if created else ''))
-
-        for name, fields in EXISTING.items():
-            Product.objects.filter(name=name).update(**fields)
 
         for category_name, items in PRODUCTS.items():
             for item in items:

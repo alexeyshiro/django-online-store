@@ -1,20 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-
-:root{
-  --bg:#FFFFFF;
-  --bg-alt:#F6F6F6;
-  --border:#E6E6E6;
-  --black:#141414;
-  --red:#E4232B;
-  --red-dark:#B91922;
-  --red-tint:#FCEBEC;
-  --text:#161616;
-  --text-dim:#5C6065;
-  --text-dim2:#9A9EA2;
-}
-
-*{ box-sizing:border-box; }
-
+/* шрифты, цвета (:root) и базовый сброс — в base.css */
 body{
   font-family:'Inter', sans-serif;
   color:var(--text);

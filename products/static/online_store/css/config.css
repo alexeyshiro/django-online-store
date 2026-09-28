@@ -5,14 +5,12 @@
     --gray-border: #e6e7eb;
     --gray-bg: #f6f7f8;
   }
-  *{ box-sizing: border-box; }
   body{
     margin:0;
     font-family:'Inter', sans-serif;   /* как на остальных страницах */
     color:var(--text);
     background:#fff;
   }
-  a{ text-decoration:none; color:inherit; }
   button{ font-family:inherit; }   /* кнопки по умолчанию не наследуют шрифт страницы */
 
   /* ===== HEADER ===== */
