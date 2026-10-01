@@ -173,6 +173,13 @@ def products(request, category_id=None, page_number=1):
         products = Product.objects.all()
         category_title = 'Все товары'
 
+    # поиск по названию: каждое слово запроса должно встречаться в названии (в любом порядке)
+    q = request.GET.get('q', '').strip()
+    if q:
+        for word in q.lower().split():
+            products = products.filter(search_name__contains=word)
+        category_title = f'Поиск: «{q}»'
+
     fields = CATEGORY_FILTERS.get(category_id, [])
     filtered = apply_filters(request, products, fields)
 
@@ -195,6 +202,7 @@ def products(request, category_id=None, page_number=1):
                                 .filter(sold__gt=0).order_by('-sold', 'id')[:5],
         'sorts': [(value, label) for value, (label, _) in SORTS.items()],
         'current_sort': sort,
+        'q': q,
     }
     return render(request, "products/base_catalog.html", context)
 

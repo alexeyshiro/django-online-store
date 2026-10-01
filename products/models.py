@@ -79,5 +79,13 @@ class Product(models.Model):
     pack_count = models.PositiveIntegerField(null=True, blank=True)     # штук в комплекте
     bearing = models.CharField(max_length=32, blank=True)               # тип подшипника
 
+    # название в нижнем регистре — только для поиска, заполняется само в save()
+    # (icontains в SQLite не понимает регистр русских букв: «гб» не нашло бы «ГБ»)
+    search_name = models.CharField(max_length=128, blank=True, editable=False)
+
+    def save(self, *args, **kwargs):
+        self.search_name = self.name.lower()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.name} | {self.category.name}"

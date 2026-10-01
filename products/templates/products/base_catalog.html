@@ -11,11 +11,12 @@
      ПАНЕЛЬ КАТАЛОГОВ
      ========================================================== -->
 <nav class="category-switch">
-  <a href="{% url 'products:index' %}"
+  {# при поиске вкладки сохраняют запрос: ищем то же самое в другой категории #}
+  <a href="{% url 'products:index' %}{% if q %}?q={{ q|urlencode }}{% endif %}"
      class="cat-tab {% if not category_id %}active{% endif %}">Все товары</a>
 
   {% for category in categories %}
-    <a href="{% url 'products:category' category.id %}"
+    <a href="{% url 'products:category' category.id %}{% if q %}?q={{ q|urlencode }}{% endif %}"
        class="cat-tab {% if category.id == category_id %}active{% endif %}">
       {{ category.name }}
     </a>
@@ -31,8 +32,9 @@
 </div>
 
 <!-- ==========================================================
-     ТОП-5 ПРОДАЖ
+     ТОП-5 ПРОДАЖ (во время поиска скрыт)
      ========================================================== -->
+{% if not q %}
 <section class="top-sales">
   <h2 class="section-title">Топ-5 по продажам</h2>
 
@@ -80,6 +82,7 @@
     {% endfor %}
   </div>
 </section>
+{% endif %}
 
 <!-- ==========================================================
      ОСНОВНОЙ КАТАЛОГ
@@ -98,6 +101,8 @@
 
   {# action ведёт на первую страницу раздела: после смены фильтров товаров может стать меньше #}
   <form method="get" action="{{ catalog_url }}" id="filters-form">
+    {# чтобы поиск не сбрасывался при фильтрах и сортировке #}
+    {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
 
     {% include 'products/includes/filter_form.html' %}
 
@@ -221,7 +226,10 @@
 
         <div class="product-empty">
           <p class="product-empty-title">Ничего не найдено</p>
-          {% if request.GET %}
+          {% if q %}
+            <p class="product-empty-text">По запросу «{{ q }}» товаров нет. Проверьте написание или сократите запрос.</p>
+            <a href="{{ catalog_url }}" class="filters-reset">Сбросить поиск и фильтры</a>
+          {% elif request.GET %}
             <p class="product-empty-text">Попробуйте изменить или сбросить фильтры.</p>
             <a href="{{ catalog_url }}" class="filters-reset">Сбросить фильтры</a>
           {% endif %}

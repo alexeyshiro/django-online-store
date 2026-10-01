@@ -23,6 +23,12 @@
         <a href="{% url 'products:index' %}">Каталог</a>
         <a href="{% url 'config' %}">Конфигуратор ПК</a>
         </nav>
+        {# поиск идёт по всему каталогу: ?q=... читает view products #}
+        <form class="header-search" method="get" action="{% url 'products:index' %}" role="search">
+          <input type="search" name="q" value="{{ request.GET.q }}"
+                 placeholder="Поиск по названию" aria-label="Поиск по названию" maxlength="100">
+          <button type="submit">Найти</button>
+        </form>
        <div class="header-right">
       <a class="cart-btn" aria-label="Избранное" title="Избранное" href="{% url 'users:favorites' %}">
         <svg viewBox="0 0 24 24"><path d="M12 20.5s-7.2-4.4-9.8-8.7C0.6 8.6 1.9 5 5.4 4.3c2.1-.4 3.9.7 6.6 3.3 2.7-2.6 4.5-3.7 6.6-3.3 3.5.7 4.8 4.3 3.2 7.5-2.6 4.3-9.8 8.7-9.8 8.7z"/></svg>
