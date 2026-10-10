@@ -53,13 +53,13 @@ PRODUCTS = {
     'Материнские платы': [
         dict(name='MSI MAG B650 TOMAHAWK WIFI', price=21999, quantity=4,
              brand='MSI', socket='AM5', chipset='B650', form_factor='ATX', memory_type='DDR5',
-             memory_slots=4, wifi='Есть', color='Чёрный'),
+             memory_slots=4, max_memory=256, wifi='Есть', color='Чёрный'),
         dict(name='ASUS PRIME B760M-A D4', price=11999, quantity=6,
              brand='ASUS', socket='LGA1700', chipset='B760', form_factor='Micro-ATX', memory_type='DDR4',
-             memory_slots=4, wifi='Нет', color='Чёрный'),
+             memory_slots=4, max_memory=128, wifi='Нет', color='Чёрный'),
         dict(name='GIGABYTE A520M K V2', price=5999, quantity=0,
              brand='GIGABYTE', socket='AM4', chipset='A520', form_factor='Micro-ATX', memory_type='DDR4',
-             memory_slots=2, wifi='Нет', color='Чёрный'),
+             memory_slots=2, max_memory=64, wifi='Нет', color='Чёрный'),
     ],
     'Оперативная память': [
         dict(name='Kingston FURY Beast 32 ГБ (2x16 ГБ) DDR5-6000', price=11499, quantity=10,

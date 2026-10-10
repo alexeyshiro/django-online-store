@@ -17,7 +17,18 @@
         <div class="progress">Обязательных выбрано: {{ required_done }} / {{ required_count }}</div>
       </div>
 
-      <div class="comp-row">
+      {% if errors %}
+        <div class="compat">
+          {% for error in errors %}
+            <div class="compat-item">❌ {{ error }}</div>
+          {% endfor %}
+        </div>
+      {% elif slots.motherboard.product and slots.cpu.product or slots.motherboard.product and slots.ram.product %}
+        {# проверять есть что, только если рядом с платой выбран процессор или память #}
+        <div class="compat compat-ok">✓ Выбранные комплектующие совместимы</div>
+      {% endif %}
+
+      <div class="comp-row{% if slots.cpu.has_error %} comp-row-error{% endif %}">
         <div class="comp-left">
           <div class="comp-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>
@@ -30,7 +41,7 @@
         {% include 'products/includes/config_slot.html' with slot=slots.cpu %}
       </div>
 
-      <div class="comp-row">
+      <div class="comp-row{% if slots.motherboard.has_error %} comp-row-error{% endif %}">
         <div class="comp-left">
           <div class="comp-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg>
@@ -43,7 +54,7 @@
         {% include 'products/includes/config_slot.html' with slot=slots.motherboard %}
       </div>
 
-      <div class="comp-row">
+      <div class="comp-row{% if slots.ram.has_error %} comp-row-error{% endif %}">
         <div class="comp-left">
           <div class="comp-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="4" y="7" width="16" height="10" rx="1"/><path d="M8 7v10M12 7v10M16 7v10"/></svg>
@@ -153,6 +164,9 @@
         {% if not selected_count %}
           <button type="button" class="buy-btn" disabled>Добавить в корзину</button>
           <p class="buy-hint">Сначала выберите комплектующие</p>
+        {% elif errors %}
+          <button type="button" class="buy-btn" disabled>Добавить в корзину</button>
+          <p class="buy-hint">Сначала исправьте ошибки совместимости</p>
         {% elif user.is_authenticated %}
           <form method="post" action="{% url 'config_to_basket' %}">
             {% csrf_token %}

@@ -43,6 +43,7 @@ CATEGORY_FILTERS = {
         ('form_factor', 'Форм-фактор'),
         ('memory_type', 'Тип памяти'),
         ('memory_slots', 'Слотов памяти'),
+        ('max_memory', 'Макс. объём памяти, ГБ'),
         ('wifi', 'Wi-Fi'),
     ],
     4: [  # оперативная память
@@ -273,7 +274,8 @@ def get_config_product_ids(request):
     return {product_id for ids in get_config(request).values() for product_id in ids}
 
 
-def config(request):
+def get_config_slots(request):
+    """Строки конфигуратора с выбранными товарами: ключ строки → {'category_id', 'multi', 'products', 'product'}."""
     chosen = get_config(request)
     chosen_products = Product.objects.in_bulk(get_config_product_ids(request))
 
@@ -285,12 +287,82 @@ def config(request):
             'multi': key in CONFIG_MULTI,
             'products': products,
             'product': products[0] if products else None,
+            'has_error': False,
         }
+    return slots
+
+
+def plural(n, one, few, many):
+    """Слово в нужной форме после числа: plural(n, 'модуль', 'модуля', 'модулей') → 1 модуль, 3 модуля, 5 модулей."""
+    if n % 10 == 1 and n % 100 != 11:
+        return one
+    if 2 <= n % 10 <= 4 and not 12 <= n % 100 <= 14:
+        return few
+    return many
+
+
+def check_compatibility(slots):
+    """Проверка совместимости сборки. Правила:
+    1) сокет процессора = сокет материнской платы;
+    2) тип оперативной памяти = тип памяти, который поддерживает материнская плата;
+    3) объём комплекта оперативной памяти не больше максимального объёма, который поддерживает плата;
+    4) модулей в комплекте оперативной памяти не больше, чем слотов памяти на плате.
+    Возвращает список текстов ошибок, а строки с проблемой помечает slot['has_error'] = True."""
+    errors = []
+
+    def add_error(message, *keys):
+        errors.append(message)
+        for key in keys:
+            slots[key]['has_error'] = True
+
+    cpu = slots['cpu']['product']
+    board = slots['motherboard']['product']
+    ram = slots['ram']['product']
+
+    if cpu and board:
+        if not cpu.socket or not board.socket:
+            add_error('Не удалось проверить совместимость процессора и материнской платы: не указан сокет.',
+                      'cpu', 'motherboard')
+        elif cpu.socket != board.socket:
+            add_error(f'Процессор «{cpu.name}» (сокет {cpu.socket}) не подходит к материнской плате '
+                      f'«{board.name}» (сокет {board.socket}).', 'cpu', 'motherboard')
+
+    if ram and board:
+        if not ram.memory_type or not board.memory_type:
+            add_error('Не удалось проверить совместимость оперативной памяти и материнской платы: '
+                      'не указан тип памяти.', 'ram', 'motherboard')
+        elif ram.memory_type != board.memory_type:
+            add_error(f'Оперативная память «{ram.name}» ({ram.memory_type}) не подходит к материнской плате '
+                      f'«{board.name}»: она поддерживает только {board.memory_type}.', 'ram', 'motherboard')
+
+        if not ram.memory or not board.max_memory:
+            add_error('Не удалось проверить, поддерживает ли материнская плата такой объём оперативной памяти: '
+                      'не указан объём.', 'ram', 'motherboard')
+        elif ram.memory > board.max_memory:
+            add_error(f'Объём оперативной памяти «{ram.name}» — {ram.memory} ГБ, а материнская плата '
+                      f'«{board.name}» поддерживает максимум {board.max_memory} ГБ.', 'ram', 'motherboard')
+
+        if not ram.modules or not board.memory_slots:
+            add_error('Не удалось проверить, хватит ли слотов под оперативную память: '
+                      'не указано количество модулей или слотов.', 'ram', 'motherboard')
+        elif ram.modules > board.memory_slots:
+            modules = plural(ram.modules, 'модуль', 'модуля', 'модулей')
+            board_slots = plural(board.memory_slots, 'слот', 'слота', 'слотов')
+            add_error(f'В комплекте оперативной памяти «{ram.name}» {ram.modules} {modules}, а на материнской плате '
+                      f'«{board.name}» только {board.memory_slots} {board_slots}.', 'ram', 'motherboard')
+
+    return errors
+
+
+def config(request):
+    slots = get_config_slots(request)
+    errors = check_compatibility(slots)
     selected = [product for slot in slots.values() for product in slot['products']]
 
     context = {
         'title': 'Конфигуратор',
         'slots': slots,
+        'errors': errors,
         'selected_count': sum(1 for slot in slots.values() if slot['products']),
         'slots_count': len(CONFIG_SLOTS),
         'required_done': sum(1 for key in CONFIG_REQUIRED if slots[key]['products']),
@@ -322,6 +394,10 @@ def config_add(request, product_id):
 def config_to_basket(request):
     """Кнопка «Добавить в корзину» в конфигураторе: вся сборка по 1 шт. каждого товара.
     Если товар уже лежит в корзине, его количество увеличивается на 1, как у кнопки «+»."""
+    # несовместимую сборку в корзину не кладём (кнопка в шаблоне тоже заблокирована)
+    if check_compatibility(get_config_slots(request)):
+        return redirect('config')
+
     products = Product.objects.filter(id__in=get_config_product_ids(request))
     for product in products:
         basket, created = Basket.objects.get_or_create(user=request.user, product=product)

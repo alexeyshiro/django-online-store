@@ -48,6 +48,7 @@ class Product(models.Model):
     # материнские платы
     chipset = models.CharField(max_length=16, blank=True)               # B650, B760
     memory_slots = models.PositiveIntegerField(null=True, blank=True)
+    max_memory = models.PositiveIntegerField(null=True, blank=True)     # макс. объём оперативной памяти, ГБ
     wifi = models.CharField(max_length=8, blank=True)                   # Есть / Нет
 
     # оперативная память
